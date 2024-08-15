@@ -8,11 +8,11 @@ website:
       - text: "Hands-on Exercises"
         menu:
           - text: "Hands-on Exercise 1"
-          - href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
+            href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
 
 format:
   html:
-    theme: morph
+    theme: cerulean
     css: styles.css
     toc: true
 
