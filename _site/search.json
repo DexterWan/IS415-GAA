@@ -2,9 +2,16 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "IS415-GAA",
+    "title": "Welcome to Dexter’s IS415-GAA",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "I am Dexter Wan, a final year Computer Science student from SMU. I specialise in cyber security, and have experienced interning at Synapxe under their Policy, Risk and Capability Development (PRCD) team.\nThis webpage is to document the exercises done for IS415 - Geospatial Analytics and Applications."
+  },
+  {
+    "objectID": "index.html#about-me",
+    "href": "index.html#about-me",
+    "title": "Welcome to Dexter’s IS415-GAA",
+    "section": "",
+    "text": "I am Dexter Wan, a final year Computer Science student from SMU. I specialise in cyber security, and have experienced interning at Synapxe under their Policy, Risk and Capability Development (PRCD) team.\nThis webpage is to document the exercises done for IS415 - Geospatial Analytics and Applications."
   },
   {
     "objectID": "about.html",
