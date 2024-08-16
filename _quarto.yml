@@ -4,6 +4,7 @@ project:
 website:
   title: "IS415-GAA"
   navbar:
+    background: orange
     left:
       - text: "Hands-on Exercises"
         menu:
@@ -12,7 +13,7 @@ website:
 
 format:
   html:
-    theme: cerulean
+    theme: lux
     css: styles.css
     toc: true
 
