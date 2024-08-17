@@ -7,7 +7,7 @@ listing:
 
 ## About Me
 
-I am **Dexter Wan**, a final year Computer Science student from SMU. I specialise in cyber security, and have experienced interning at **Synapxe** under their [Policy, Risk and Capability Development (PRCD)]{.underline} team.
+I am **Dexter Wan**, a final year Computer Science student from SMU, undergoing the cyber security track.
 
 This webpage is to document the exercises done for [**IS415 - Geospatial Analytics and Applications**]{.underline}.
 
