@@ -4,14 +4,21 @@
     "href": "index.html",
     "title": "Welcome to Dexter’s IS415-GAA",
     "section": "",
-    "text": "I am Dexter Wan, a final year Computer Science student from SMU. I specialise in cyber security, and have experienced interning at Synapxe under their Policy, Risk and Capability Development (PRCD) team.\nThis webpage is to document the exercises done for IS415 - Geospatial Analytics and Applications."
+    "text": "I am Dexter Wan, a final year Computer Science student from SMU, undergoing the cyber security track.\nThis webpage is to document the exercises done for IS415 - Geospatial Analytics and Applications."
   },
   {
     "objectID": "index.html#about-me",
     "href": "index.html#about-me",
     "title": "Welcome to Dexter’s IS415-GAA",
     "section": "",
-    "text": "I am Dexter Wan, a final year Computer Science student from SMU. I specialise in cyber security, and have experienced interning at Synapxe under their Policy, Risk and Capability Development (PRCD) team.\nThis webpage is to document the exercises done for IS415 - Geospatial Analytics and Applications."
+    "text": "I am Dexter Wan, a final year Computer Science student from SMU, undergoing the cyber security track.\nThis webpage is to document the exercises done for IS415 - Geospatial Analytics and Applications."
+  },
+  {
+    "objectID": "index.html#exercises",
+    "href": "index.html#exercises",
+    "title": "Welcome to Dexter’s IS415-GAA",
+    "section": "Exercises",
+    "text": "Exercises"
   },
   {
     "objectID": "about.html",
@@ -75,12 +82,5 @@
     "title": "Hands-on Exercise 1",
     "section": "Exploratory Data Analysis (EDA)",
     "text": "Exploratory Data Analysis (EDA)\n\nHistogram\n\nhist(mpsz3414$`PreSch Density`)\n\n\n\n\n\n\n\n\n\n\nHistogram with better visualisation\n\nggplot(data=mpsz3414, \n       aes(x= as.numeric(`PreSch Density`)))+\n  geom_histogram(bins=20, \n                 color=\"black\", \n                 fill=\"light blue\") +\n  labs(title = \"Are pre-school even distributed in Singapore?\",\n       subtitle= \"There are many planning sub-zones with a single pre-school, on the other hand, \\nthere are two planning sub-zones with at least 20 pre-schools\",\n      x = \"Pre-school density (per km sq)\",\n      y = \"Frequency\")\n\n\n\n\n\n\n\n\n\n\nScatterplot\n\nggplot(data=mpsz3414, \n       aes(y = `PreSch Count`, \n           x= as.numeric(`PreSch Density`)))+\n  geom_point(color=\"black\", \n             fill=\"light blue\") +\n  xlim(0, 40) +\n  ylim(0, 40) +\n  labs(title = \"\",\n      x = \"Pre-school density (per km sq)\",\n      y = \"Pre-school count\")\n\nWarning: Removed 2 rows containing missing values or values outside the scale range\n(`geom_point()`)."
-  },
-  {
-    "objectID": "index.html#exercises",
-    "href": "index.html#exercises",
-    "title": "Welcome to Dexter’s IS415-GAA",
-    "section": "Exercises",
-    "text": "Exercises"
   }
 ]
