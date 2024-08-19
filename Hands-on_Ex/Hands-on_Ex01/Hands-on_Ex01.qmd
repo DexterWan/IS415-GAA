@@ -1,6 +1,12 @@
 ---
 title: "Hands-on Exercise 1"
 author: "Dexter Wan"
+date: "August 14, 2024"
+date-modified: "August 16, 2024"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
 ---
 
 ## Importing Geospatial Data

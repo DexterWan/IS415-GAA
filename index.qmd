@@ -3,6 +3,7 @@ title: "Welcome to Dexter's IS415-GAA"
 listing: 
   contents:
     - "Hands-on_Ex/Hands-on_Ex01/*.qmd"
+    - "In-Class_Ex/In-Class_Ex01/*.qmd"
 ---
 
 ## About Me
