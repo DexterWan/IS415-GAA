@@ -1,0 +1,170 @@
+---
+title: "Hands-on Exercise 2"
+author: "Dexter Wan"
+date: "August 22, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+## Importing Data
+
+Load *sf*, *tidyverse* and *tmap* packages into R environment, and import **Master Plan 2014** data and **Singapore Residents** data into R environment:
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap)
+mpsz = st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
+popdata = read_csv("data/aspatial/respopagesextod2011to2020.csv")
+```
+
+## Data Preparation
+
+### Data Wrangling
+
+Performing data wrangling on the data. I have adjusted the *rowSums* for the grouping as the order of columns may be sorted differently. For example, age group 5_to_9 is under column 14, not 12.
+
+```{r}
+popwider <- popdata %>%
+  filter(Time == 2020) %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup()%>%
+  pivot_wider(names_from=AG,values_from=POP)
+  
+popwider
+```
+
+```{r}
+popdata2020 <- popdata %>%
+  filter(Time == 2020) %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup()%>%
+  pivot_wider(names_from=AG,values_from=POP) %>%
+  mutate(YOUNG = rowSums(.[3:6]) +rowSums(.[14])) %>%
+  mutate(`ECONOMY ACTIVE` = rowSums(.[7:13])+rowSums(.[15]))%>%
+  mutate(`AGED`=rowSums(.[16:21])) %>%
+  mutate(`TOTAL`=rowSums(.[3:21])) %>%  
+  mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)/`ECONOMY ACTIVE`) %>%
+  select(`PA`, `SZ`, `YOUNG`, `ECONOMY ACTIVE`, `AGED`, `TOTAL`, `DEPENDENCY`)
+
+popdata2020
+```
+
+### Joining attribute and geospatial data
+
+Setting all location data to uppercase and joining it with the **Master Plan 2014** data.
+
+```{r}
+popdata2020 <- popdata2020 %>%
+  mutate_at(.vars = vars(PA,SZ), .funs = list(toupper)) %>%
+  filter('ECONOMY ACTIVE' > 0)
+
+mpsz_pop2020 <- left_join(mpsz, popdata2020, by = c("SUBZONE_N"="SZ"))
+```
+
+## Plotting a choropleth map
+
+### Quick map using *qtm()*
+
+```{r}
+tmap_mode("plot")
+qtm(mpsz_pop2020, fill = "DEPENDENCY")
+```
+
+### Complete Map with elements
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", style = "quantile", palette = "Oranges", title = "Dependency Ratio") +
+  tm_layout(main.title = "Distribution of Dependency Ratio by Subzone",
+            main.title.position = "center", frame = TRUE) +
+  tm_borders(lwd = 0.1, alpha = 0.5) +
+  tm_compass() +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", position = c("left", "bottom"))
+```
+
+### Map using *tm_polygons()*
+
+```{r}
+tm_shape(mpsz_pop2020) + tm_polygons("DEPENDENCY")
+```
+
+### Data classification methods of tmap
+
+Quantile:
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", style = "quantile", palette = "Oranges", title = "Dependency Ratio", n = 5) +
+  tm_borders(alpha = 0.5)
+```
+
+Equal:
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", style = "equal", palette = "Oranges", title = "Dependency Ratio", n = 5) +
+  tm_borders(alpha = 0.5)
+```
+
+Custom Breaks:
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", breaks = c(0, 0.6, 0.7, 0.8, 0.9, 1), palette = "-Greens", title = "Dependency Ratio") +
+  tm_borders(alpha = 0.5) + 
+  tmap_style("grey")
+```
+
+### Drawing Small Multiple Maps
+
+Assign multiple values to at least one aesthetic arguments.
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill(c("YOUNG", "AGED"), palette = list("Greens", "Oranges")) +
+  tm_layout(legend.position = c("right", "bottom")) +
+  tm_borders(alpha = 0.5) + 
+  tmap_style("grey")
+```
+
+Using *tm_facets().*
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill(c("YOUNG", "AGED"), palette = list("Greens", "Oranges")) +
+  tm_layout(legend.position = c("right", "bottom")) +
+  tm_borders(alpha = 0.5) + 
+  tmap_style("grey")
+```
+
+Using *tmap_arrange()*
+
+```{r}
+ymap = tm_shape(mpsz_pop2020) +
+  tm_polygons("YOUNG", palette = "Greens") + 
+  tmap_style("grey")
+
+amap = tm_shape(mpsz_pop2020) +
+  tm_polygons("AGED", palette = "Oranges") + 
+  tmap_style("grey")
+
+tmap_arrange(ymap, amap, asp = 1, ncol = 2)
+```
+
+### Mapping Spatial Object meeting a Selection Criterion
+
+```{r}
+tm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N == "CENTRAL REGION", ])+
+  tm_fill("DEPENDENCY", style = "quantile", palette = "Oranges", title = "Dependency Ratio") +
+  tm_layout(main.title = "Distribution of Dependency Ratio by Subzone",
+            main.title.position = "center", frame = FALSE, legend.outside = TRUE) +
+  tm_borders(lwd = 0.1, alpha = 0.5) +
+  tm_compass() +
+  tm_scale_bar()
+```
