@@ -148,6 +148,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html">
  <span class="dropdown-text">In-Class Exercise 1</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html">
+ <span class="dropdown-text">In-Class Exercise 2</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -166,7 +170,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#importing-data" id="toc-importing-data" class="nav-link active" data-scroll-target="#importing-data">Importing Data</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a>
+  <ul class="collapse">
+  <li><a href="#changelog" id="toc-changelog" class="nav-link" data-scroll-target="#changelog">Changelog</a></li>
+  </ul></li>
+  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data">Importing Data</a></li>
   <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">Data Preparation</a>
   <ul class="collapse">
   <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data Wrangling</a></li>
@@ -213,7 +221,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">August 22, 2024</p>
+      <p class="date-modified">August 26, 2024</p>
     </div>
   </div>
     
@@ -224,6 +232,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Learning to plot Choropleth maps using R.</p>
+<section id="changelog" class="level3">
+<h3 class="anchored" data-anchor-id="changelog">Changelog</h3>
+<p>26 Aug 24: Updated the description and added a changelog.</p>
+</section>
+</section>
 <section id="importing-data" class="level2">
 <h2 class="anchored" data-anchor-id="importing-data">Importing Data</h2>
 <p>Load <em>sf</em>, <em>tidyverse</em> and <em>tmap</em> packages into R environment, and import <strong>Master Plan 2014</strong> data and <strong>Singapore Residents</strong> data into R environment:</p>
@@ -232,7 +248,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mpsz <span class="ot">=</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/geospatial"</span>, <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_WEB_PL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `MP14_SUBZONE_WEB_PL' from data source 
-  `D:\0SMU\IS415-GAA\Hands-on_Ex\Hands-on_Ex02\data\geospatial' 
+  `C:\0SMU\IS415-GAA\Hands-on_Ex\Hands-on_Ex02\data\geospatial' 
   using driver `ESRI Shapefile'
 Simple feature collection with 323 features and 15 fields
 Geometry type: MULTIPOLYGON

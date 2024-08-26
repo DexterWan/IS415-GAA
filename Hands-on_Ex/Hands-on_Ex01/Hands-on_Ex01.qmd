@@ -2,12 +2,22 @@
 title: "Hands-on Exercise 1"
 author: "Dexter Wan"
 date: "August 14, 2024"
-date-modified: "August 16, 2024"
+date-modified: "last-modified"
 execute: 
   eval: true
   echo: true
   freeze: true
 ---
+
+## Description
+
+Learning to import data, displaying and modifying shapefiles in R.
+
+### Changelog
+
+19 Aug 24: Completed Hands-on Exercise 2
+
+26 Aug 24: Updated the description and added a changelog.
 
 ## Importing Geospatial Data
 

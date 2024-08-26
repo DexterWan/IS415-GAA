@@ -9,6 +9,16 @@ execute:
   freeze: true
 ---
 
+## Description
+
+Learning to plot Choropleth maps using R.
+
+### Changelog
+
+22 Aug 24: Completed Hands-on Exercise 2
+
+26 Aug 24: Updated the description and added a changelog.
+
 ## Importing Data
 
 Load *sf*, *tidyverse* and *tmap* packages into R environment, and import **Master Plan 2014** data and **Singapore Residents** data into R environment:

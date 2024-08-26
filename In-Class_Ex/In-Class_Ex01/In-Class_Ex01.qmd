@@ -1,5 +1,5 @@
 ---
-title: "In-Class_Ex01"
+title: "In-Class Exercise 1"
 author: "Dexter Wan"
 date: "August 19, 2024"
 date-modified: "last-modified"
@@ -8,3 +8,13 @@ execute:
   echo: true
   freeze: true
 ---
+
+## Description
+
+Learning the options for headers (e.g. date-modified) in R.
+
+### Changelog
+
+19 Aug 24: Completed In-Class Exercise 1
+
+26 Aug 24: Updated the description and added a changelog.

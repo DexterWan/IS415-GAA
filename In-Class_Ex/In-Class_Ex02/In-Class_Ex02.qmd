@@ -1,0 +1,95 @@
+---
+title: "In-Class Exercise 2"
+author: "Dexter Wan"
+date: "August 26, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+## Description
+
+Learning to write sf in to KML files in R.
+
+### Changelog
+
+26 Aug 24: Completed In-Class Exercise 2.
+
+## Importing and writing data
+
+```{r}
+pacman::p_load(sf, tidyverse, ggplot2, tmap)
+mpsz = st_read(dsn = "data", layer = "MP14_SUBZONE_WEB_PL")
+#mpsz_kml <- st_read("data/MasterPlan2014SubzoneBoundaryWeb.kml")
+```
+
+The KML file is unreadable, and thus is not usable in this context. This could be this is a ***zip*** KML, which is not readable. Thankfully, we are still able to use the shapefile. The code to read the KML file has been commented out to allow the page to render.
+
+Shapefiles are more robust and have better support compared to KML, and tends to be preferred. We can write sf into a KML file:
+
+```{r}
+st_write(mpsz, "data/MP14_SUBZONE_WEB_PL.kml", delete_dsn = TRUE)
+```
+
+The argument *delete_dsn* is to ensure that if a file with the same name exists, it will be delete it first. This ensures a overwrite should the data be modified.
+
+Import the **Master Plan 2019** and **Master Plan 2019 (No Sea)** data:
+
+```{r}
+mpsz2019_shp = st_read(dsn = "data", layer = "MPSZ-2019")
+mpsz2019_kml <- st_read("data/MasterPlan2019SubzoneBoundaryNoSeaKML.kml")
+```
+
+As the CRS for both files are WGS 84, we should transform it into SVY21:
+
+```{r}
+mpsz2019_shp = st_read(dsn = "data", layer = "MPSZ-2019") %>%
+  st_transform(crs=3414)
+presch = st_read("data/PreSchoolsLocation.kml") %>%
+  st_transform(crs=3414)
+```
+
+Import **Singapore Residents June 2023** data:
+
+```{r}
+popdata = read_csv("data/respopagesextod2023.csv")
+```
+
+Reorganise the population data to base data only on age, planning area and subzone. It also makes age into columns rather than different rows using *pivot_wider*:
+
+```{r}
+popdata2023 = popdata %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP`= sum(`Pop`)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = AG, values_from = POP)
+
+colnames(popdata2023)
+```
+
+## Data Processing
+
+```{r}
+popdata2023 <- popdata2023 %>%
+  mutate(YOUNG = rowSums(.[3:6]) +rowSums(.[14])) %>%
+  mutate(`ECONOMY ACTIVE` = rowSums(.[7:13])+rowSums(.[15]))%>%
+  mutate(`AGED`=rowSums(.[16:21])) %>%
+  mutate(`TOTAL`=rowSums(.[3:21])) %>%  
+  mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)/`ECONOMY ACTIVE`) %>%
+  select(`PA`, `SZ`, `YOUNG`, `ECONOMY ACTIVE`, `AGED`, `TOTAL`, `DEPENDENCY`)
+
+popdata2023
+```
+
+Join the **popdata2023** with the **Master Plan 2019** data.
+
+```{r}
+popdata2023 <- popdata2023 %>%
+  mutate_at(.vars = vars(PA,SZ), .funs = list(toupper))
+
+mpsz_pop2023 <- left_join(mpsz2019_shp, popdata2023, by = c("SUBZONE_N"="SZ"))
+# pop2023_mpsz <- left_join(popdata2023, mpsz2019_shp, by = c("SUBZONE_N"="SZ"))
+# The commented code will give an error as the sequence of the tables is wrong
+```
