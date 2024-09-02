@@ -257,5 +257,26 @@
     "title": "In-Class Exercise 2",
     "section": "Data Processing",
     "text": "Data Processing\n\npopdata2023 &lt;- popdata2023 %&gt;%\n  mutate(YOUNG = rowSums(.[3:6]) +rowSums(.[14])) %&gt;%\n  mutate(`ECONOMY ACTIVE` = rowSums(.[7:13])+rowSums(.[15]))%&gt;%\n  mutate(`AGED`=rowSums(.[16:21])) %&gt;%\n  mutate(`TOTAL`=rowSums(.[3:21])) %&gt;%  \n  mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)/`ECONOMY ACTIVE`) %&gt;%\n  select(`PA`, `SZ`, `YOUNG`, `ECONOMY ACTIVE`, `AGED`, `TOTAL`, `DEPENDENCY`)\n\npopdata2023\n\n# A tibble: 332 × 7\n   PA         SZ                   YOUNG `ECONOMY ACTIVE`  AGED TOTAL DEPENDENCY\n   &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt;            &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;\n 1 Ang Mo Kio Ang Mo Kio Town Cen…  1240             2830   890  4960      0.753\n 2 Ang Mo Kio Cheng San             5150            15600  6580 27330      0.752\n 3 Ang Mo Kio Chong Boon            4620            14120  7060 25800      0.827\n 4 Ang Mo Kio Kebun Bahru           4320            12400  5640 22360      0.803\n 5 Ang Mo Kio Sembawang Hills       1840             3670  1420  6930      0.888\n 6 Ang Mo Kio Shangri-La            3810             9600  4320 17730      0.847\n 7 Ang Mo Kio Tagore                1870             4320  1790  7980      0.847\n 8 Ang Mo Kio Townsville            3750            11090  5390 20230      0.824\n 9 Ang Mo Kio Yio Chu Kang             0                0     0     0    NaN    \n10 Ang Mo Kio Yio Chu Kang East     1090             2410   880  4380      0.817\n# ℹ 322 more rows\n\n\nJoin the popdata2023 with the Master Plan 2019 data.\n\npopdata2023 &lt;- popdata2023 %&gt;%\n  mutate_at(.vars = vars(PA,SZ), .funs = list(toupper))\n\nmpsz_pop2023 &lt;- left_join(mpsz2019_shp, popdata2023, by = c(\"SUBZONE_N\"=\"SZ\"))\n# pop2023_mpsz &lt;- left_join(popdata2023, mpsz2019_shp, by = c(\"SUBZONE_N\"=\"SZ\"))\n# The commented code will give an error as the sequence of the tables is wrong"
+  },
+  {
+    "objectID": "In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html",
+    "href": "In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html",
+    "title": "In-Class Exercise 3",
+    "section": "",
+    "text": "Learning some error in Hands-on Exercise 3 and how to solve it.\n\n\n02 Sep 24: Created In-Class Exercise 3."
+  },
+  {
+    "objectID": "In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html#description",
+    "href": "In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html#description",
+    "title": "In-Class Exercise 3",
+    "section": "",
+    "text": "Learning some error in Hands-on Exercise 3 and how to solve it.\n\n\n02 Sep 24: Created In-Class Exercise 3."
+  },
+  {
+    "objectID": "In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html#importing-data",
+    "href": "In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html#importing-data",
+    "title": "In-Class Exercise 3",
+    "section": "Importing data",
+    "text": "Importing data\nInstall maptools. It has been retired, so we must go to posit public package manager to find the old version.\n\n# The above \"eval: false\" prevents the code chunk from running everytime the document is rendered\ninstall.packages(\"maptools\", repos = \"https://packagemanager.posit.co/cran/2023-10-13\")\n\nMaptools allows us to perform the conversion of as.SpatialGridDataFrame.im().\nImport Myanmar ACLED data:\n\npacman::p_load(sf, tidyverse)\nacled_sf = read_csv(\"data/ACLED_Myanmar.csv\") %&gt;%\n  st_as_sf(coords = c(\"longitude\", \"latitude\"), crs = 4326) %&gt;%\n  st_transform(crs = 32647) %&gt;%\n  mutate(event_date = dmy(event_date))\n\nRows: 55574 Columns: 31\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (20): event_id_cnty, event_date, disorder_type, event_type, sub_event_ty...\ndbl (11): year, time_precision, inter1, inter2, interaction, iso, latitude, ...\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n\n\nThe read_csv would read the date given as a string. As such, we need to use the mutate command to convert it into a date format."
   }
 ]

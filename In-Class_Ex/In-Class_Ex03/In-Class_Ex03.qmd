@@ -1,0 +1,42 @@
+---
+title: "In-Class Exercise 3"
+author: "Dexter Wan"
+date: "September 2, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+## Description
+
+Learning some error in Hands-on Exercise 3 and how to solve it.
+
+### Changelog
+
+02 Sep 24: Created In-Class Exercise 3.
+
+## Importing data
+
+Install *maptools.* It has been retired, so we must go to posit public package manager to find the old version.
+
+```{r}
+#| eval: false
+# The above "eval: false" prevents the code chunk from running everytime the document is rendered
+install.packages("maptools", repos = "https://packagemanager.posit.co/cran/2023-10-13")
+```
+
+*Maptools* allows us to perform the conversion of *as.SpatialGridDataFrame.im().*
+
+Import Myanmar ACLED data:
+
+```{r}
+pacman::p_load(sf, tidyverse)
+acled_sf = read_csv("data/ACLED_Myanmar.csv") %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
+  st_transform(crs = 32647) %>%
+  mutate(event_date = dmy(event_date))
+```
+
+The read_csv would read the date given as a string. As such, we need to use the mutate command to convert it into a date format.

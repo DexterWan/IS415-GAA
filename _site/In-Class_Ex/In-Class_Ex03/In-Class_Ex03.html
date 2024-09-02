@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Dexter Wan">
+<meta name="dcterms.date" content="2024-09-02">
 
-<title>IS415-GAA - Welcome to Dexter’s IS415-GAA</title>
+<title>IS415-GAA - In-Class Exercise 3</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +22,59 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,67 +102,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -138,7 +114,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">IS415-GAA</span>
     </a>
   </div>
@@ -154,15 +130,15 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercises">    
         <li>
-    <a class="dropdown-item" href="./Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html">
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html">
  <span class="dropdown-text">Hands-on Exercise 1</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html">
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html">
  <span class="dropdown-text">Hands-on Exercise 2</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html">
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html">
  <span class="dropdown-text">Hands-on Exercise 3</span></a>
   </li>  
     </ul>
@@ -173,15 +149,15 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-in-class-exercises">    
         <li>
-    <a class="dropdown-item" href="./In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html">
+    <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html">
  <span class="dropdown-text">In-Class Exercise 1</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html">
+    <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html">
  <span class="dropdown-text">In-Class Exercise 2</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html">
+    <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html">
  <span class="dropdown-text">In-Class Exercise 3</span></a>
   </li>  
     </ul>
@@ -202,8 +178,11 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#about-me" id="toc-about-me" class="nav-link active" data-scroll-target="#about-me">About Me</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a>
+  <ul class="collapse">
+  <li><a href="#changelog" id="toc-changelog" class="nav-link" data-scroll-target="#changelog">Changelog</a></li>
+  </ul></li>
+  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data">Importing data</a></li>
   </ul>
 </nav>
     </div>
@@ -212,15 +191,33 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Welcome to Dexter’s IS415-GAA</h1>
+<h1 class="title">In-Class Exercise 3</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Dexter Wan </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 2, 2024</p>
+    </div>
+  </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">September 2, 2024</p>
+    </div>
+  </div>
     
   </div>
   
@@ -229,193 +226,46 @@ window.Quarto = {
 </header>
 
 
-<section id="about-me" class="level2">
-<h2 class="anchored" data-anchor-id="about-me">About Me</h2>
-<p>I am <strong>Dexter Wan</strong>, a final year Computer Science student from SMU, undergoing the cyber security track.</p>
-<p>This webpage is to document the exercises done for <u><strong>IS415 - Geospatial Analytics and Applications</strong></u>.</p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Learning some error in Hands-on Exercise 3 and how to solve it.</p>
+<section id="changelog" class="level3">
+<h3 class="anchored" data-anchor-id="changelog">Changelog</h3>
+<p>02 Sep 24: Created In-Class Exercise 3.</p>
 </section>
-<section id="exercises" class="level2">
-<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+</section>
+<section id="importing-data" class="level2">
+<h2 class="anchored" data-anchor-id="importing-data">Importing data</h2>
+<p>Install <em>maptools.</em> It has been retired, so we must go to posit public package manager to find the old version.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The above "eval: false" prevents the code chunk from running everytime the document is rendered</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"maptools"</span>, <span class="at">repos =</span> <span class="st">"https://packagemanager.posit.co/cran/2023-10-13"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><em>Maptools</em> allows us to perform the conversion of <em>as.SpatialGridDataFrame.im().</em></p>
+<p>Import Myanmar ACLED data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>acled_sf <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"data/ACLED_Myanmar.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">32647</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">event_date =</span> <span class="fu">dmy</span>(event_date))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 55574 Columns: 31
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (20): event_id_cnty, event_date, disorder_type, event_type, sub_event_ty...
+dbl (11): year, time_precision, inter1, inter2, interaction, iso, latitude, ...
 
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>The read_csv would read the date given as a string. As such, we need to use the mutate command to convert it into a date format.</p>
 
 
 </section>
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1723564800000" data-listing-file-modified-sort="1724638952813" data-listing-date-modified-sort="1724638952000" data-listing-reading-time-sort="3" data-listing-word-count-sort="536">
-<div class="thumbnail">
-<p><a href="./Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" class="no-external"></a></p><a href="./Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" class="no-external">
-<p class="card-img-top"><img src="Hands-on_Ex\Hands-on_Ex01\Hands-on_Ex01_files\figure-html\unnamed-chunk-6-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" class="no-external">Hands-on Exercise 1</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="./Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" class="no-external">Learning to import data, displaying and modifying shapefiles in R.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" class="no-external">
-<div class="listing-date">
-Aug 14, 2024
-</div>
-<div class="listing-author">
-Dexter Wan
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1724256000000" data-listing-file-modified-sort="1724638794065" data-listing-date-modified-sort="1724638794000" data-listing-reading-time-sort="3" data-listing-word-count-sort="547">
-<div class="thumbnail">
-<p><a href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" class="no-external"></a></p><a href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" class="no-external">
-<p class="card-img-top"><img src="Hands-on_Ex\Hands-on_Ex02\Hands-on_Ex02_files\figure-html\unnamed-chunk-5-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" class="no-external">Hands-on Exercise 2</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" class="no-external">Learning to plot Choropleth maps using R.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" class="no-external">
-<div class="listing-date">
-Aug 22, 2024
-</div>
-<div class="listing-author">
-Dexter Wan
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-listing-date-sort="1724947200000" data-listing-file-modified-sort="1725075688000" data-listing-date-modified-sort="1725075688000" data-listing-reading-time-sort="9" data-listing-word-count-sort="1720">
-<div class="thumbnail">
-<p><a href="./Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" class="no-external"></a></p><a href="./Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" class="no-external">
-<p class="card-img-top"><img src="Hands-on_Ex\Hands-on_Ex03\Hands-on_Ex03_files\figure-html\unnamed-chunk-12-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" class="no-external">Hands-on Exercise 3</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="./Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" class="no-external">Learning to perform Order Spatial Point Pattern Analysis in R.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html" class="no-external">
-<div class="listing-date">
-Aug 30, 2024
-</div>
-<div class="listing-author">
-Dexter Wan
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-listing-date-sort="1723996800000" data-listing-file-modified-sort="1724638879255" data-listing-date-modified-sort="1724638879000" data-listing-reading-time-sort="1" data-listing-word-count-sort="25">
-<div class="thumbnail">
-<p><a href="./In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html" class="no-external"></a></p><a href="./In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-</a><p><a href="./In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html" class="no-external">In-Class Exercise 1</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="./In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html" class="no-external">Learning the options for headers (e.g.&nbsp;date-modified) in R.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./In-Class_Ex/In-Class_Ex01/In-Class_Ex01.html" class="no-external">
-<div class="listing-date">
-Aug 19, 2024
-</div>
-<div class="listing-author">
-Dexter Wan
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-listing-date-sort="1724601600000" data-listing-file-modified-sort="1724642480877" data-listing-date-modified-sort="1724642480000" data-listing-reading-time-sort="2" data-listing-word-count-sort="329">
-<div class="thumbnail">
-<p><a href="./In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html" class="no-external"></a></p><a href="./In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-</a><p><a href="./In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html" class="no-external">In-Class Exercise 2</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="./In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html" class="no-external">Learning to write sf in to KML files in R.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html" class="no-external">
-<div class="listing-date">
-Aug 26, 2024
-</div>
-<div class="listing-author">
-Dexter Wan
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-listing-date-sort="1725206400000" data-listing-file-modified-sort="1725247173975" data-listing-date-modified-sort="1725247173000" data-listing-reading-time-sort="1" data-listing-word-count-sort="118">
-<div class="thumbnail">
-<p><a href="./In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html" class="no-external"></a></p><a href="./In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-</a><p><a href="./In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html" class="no-external">In-Class Exercise 3</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="./In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html" class="no-external">Learning some error in Hands-on Exercise 3 and how to solve it.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html" class="no-external">
-<div class="listing-date">
-Sep 2, 2024
-</div>
-<div class="listing-author">
-Dexter Wan
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
