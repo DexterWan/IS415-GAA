@@ -22,6 +22,8 @@ website:
             href: "In-Class_Ex/In-Class_Ex02/In-Class_Ex02.html"
           - text: "In-Class Exercise 3"
             href: "In-Class_Ex/In-Class_Ex03/In-Class_Ex03.html"
+          - text: "In-Class Exercise 4"
+            href: "In-Class_Ex/In-Class_Ex04/In-Class_Ex04.html"
 
 format:
   html:

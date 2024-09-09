@@ -1,0 +1,108 @@
+---
+title: "In-Class Exercise 4"
+author: "Dexter Wan"
+date: "September 9, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+## Importing data and loading package
+
+```{r}
+pacman::p_load(sf, raster, spatstat, sparr, tidyverse, tmap)
+```
+
+```{r}
+kbb = st_read(dsn = "data/raw", layer = "Kepulauan_Bangka_Belitung")
+```
+
+```{r}
+kbb_sf = st_read(dsn = "data/raw", layer = "Kepulauan_Bangka_Belitung") %>%
+  st_union() %>%
+  st_zm(drop = TRUE, what = "ZM") %>%
+  st_transform(crs = 32748)
+```
+
+Convert into OWIN:
+
+```{r}
+kbb_owin = as.owin(kbb_sf)
+kbb_owin
+class(kbb_owin)
+```
+
+```{r}
+fire_sf = read_csv("data/raw/forestfires.csv") %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
+  st_transform(crs = 32748)
+```
+
+```{r}
+fire_sf = fire_sf %>%
+  mutate(DayofYear = yday(acq_date)) %>% #gives a column for day
+  mutate(Month_num = month(acq_date)) %>% #gives a column for numerical month
+  mutate(Month_fac = month(acq_date, label = TRUE, abbr = FALSE)) #gives a column for month spelled out e.g. July
+```
+
+## Plotting
+
+### Overall plot
+
+```{r}
+tm_shape(kbb_sf) +
+  tm_polygons() +
+  tm_shape(fire_sf) +
+  tm_dots()
+```
+
+### Plotting by month
+
+```{r}
+tm_shape(kbb_sf) +
+  tm_polygons() +
+tm_shape(fire_sf) +
+  tm_dots(size = 0.2) +
+tm_facets(by = "Month_fac", free.coords = FALSE, drop.units = TRUE)
+```
+
+## Computing STKDE by Month
+
+```{r}
+fire_month = fire_sf %>% select(Month_num) #get forest fires by month
+fire_month_ppp = as.ppp(fire_month)
+fire_month_ppp
+```
+
+```{r}
+summary(fire_month_ppp)
+```
+
+```{r}
+any(duplicated(fire_month_ppp)) #check for duplicate points
+```
+
+```{r}
+fire_month_owin = fire_month_ppp[kbb_owin]
+summary(fire_month_owin)
+```
+
+Computing the Spatio-Temporal KDE
+
+```{r}
+st_kde = spattemp.density(fire_month_owin)
+summary(st_kde)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+tims = c(7,8,9,10,11,12)
+par(mfcol = c(2,3), mai=c(0.3,0.3,0.3,0.3))
+for(i in tims){
+  plot(st_kde, i, override.par = FALSE, fix.range = TRUE, 
+       main = paste("KDE at month ", i))
+}
+```
