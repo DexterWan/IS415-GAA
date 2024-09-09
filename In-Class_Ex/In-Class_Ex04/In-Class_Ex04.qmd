@@ -9,6 +9,14 @@ execute:
   freeze: true
 ---
 
+## Description
+
+Learning to perform Spatio-Temporial Point Pattern Analysis in R.
+
+### Changelog
+
+9 Sep 24: Completed In-Class Exercise 4.
+
 ## Importing data and loading package
 
 ```{r}
