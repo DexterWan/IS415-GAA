@@ -17,10 +17,12 @@ Learning to perform Spatio-Temporial Point Pattern Analysis in R.
 
 9 Sep 24: Completed In-Class Exercise 4.
 
+12 Sep 24: Completed Day-of-Year animation plotting
+
 ## Importing data and loading package
 
 ```{r}
-pacman::p_load(sf, raster, spatstat, sparr, tidyverse, tmap)
+pacman::p_load(sf, raster, spatstat, sparr, tidyverse, tmap, animation)
 ```
 
 ```{r}
@@ -104,6 +106,8 @@ st_kde = spattemp.density(fire_month_owin)
 summary(st_kde)
 ```
 
+Plotting individual months:
+
 ```{r}
 #| fig-width: 12
 #| fig-height: 10
@@ -114,3 +118,62 @@ for(i in tims){
        main = paste("KDE at month ", i))
 }
 ```
+
+## Computing STKDE by Day of Year (Ver 1)
+
+```{r}
+#Create ppp object 
+fire_doy_ppp = fire_sf %>%
+  select(DayofYear) %>%
+  as.ppp() 
+summary(fire_doy_ppp)
+```
+
+Combine ppp and owin:
+
+```{r}
+fire_doy_owin = fire_doy_ppp[kbb_owin] 
+summary(fire_doy_owin)
+```
+
+Computing the Spatio-Temporal KDE:
+
+```{r}
+kde_doy = spattemp.density(fire_doy_owin) 
+summary(kde_doy)
+```
+
+Animated plotting:
+
+```{r}
+animation::saveGIF(plot(kde_doy), movie.name = "kde_doy1.gif", interval = 0.1, ani.width = 600)
+```
+
+Here is *kde_doy1.gif* imported directly through R studio:
+
+![](kde_doy1.gif)
+
+## Computing STKDE by Day of Year (Ver 2)
+
+Using **BOOT.spattemp** to determine spatial bandwidth and scalar temporal bandwidth:
+
+```{r}
+set.seed(1234) 
+BOOT.spattemp(fire_doy_owin)
+```
+
+Computing spatio-temporal KDE
+
+```{r} kde_doy = spattemp.density(fire_doy_owin, h = 9000, lambda = 19)}
+summary(kde_doy)
+```
+
+Animated plotting
+
+```{r}
+animation::saveGIF(plot(kde_doy), movie.name = "kde_doy2.gif", interval = 0.2, ani.width = 600)
+```
+
+Here is *kde_doy2.gif* imported directly through R studio:
+
+![](kde_doy2.gif)

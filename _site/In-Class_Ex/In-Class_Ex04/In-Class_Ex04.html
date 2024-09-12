@@ -141,6 +141,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html">
  <span class="dropdown-text">Hands-on Exercise 3</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html">
+ <span class="dropdown-text">Hands-on Exercise 5</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -193,6 +197,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#plotting-by-month" id="toc-plotting-by-month" class="nav-link" data-scroll-target="#plotting-by-month">Plotting by month</a></li>
   </ul></li>
   <li><a href="#computing-stkde-by-month" id="toc-computing-stkde-by-month" class="nav-link" data-scroll-target="#computing-stkde-by-month">Computing STKDE by Month</a></li>
+  <li><a href="#computing-stkde-by-day-of-year-ver-1" id="toc-computing-stkde-by-day-of-year-ver-1" class="nav-link" data-scroll-target="#computing-stkde-by-day-of-year-ver-1">Computing STKDE by Day of Year (Ver 1)</a></li>
+  <li><a href="#computing-stkde-by-day-of-year-ver-2" id="toc-computing-stkde-by-day-of-year-ver-2" class="nav-link" data-scroll-target="#computing-stkde-by-day-of-year-ver-2">Computing STKDE by Day of Year (Ver 2)</a></li>
   </ul>
 </nav>
     </div>
@@ -225,7 +231,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">September 9, 2024</p>
+      <p class="date-modified">September 12, 2024</p>
     </div>
   </div>
     
@@ -242,12 +248,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="changelog" class="level3">
 <h3 class="anchored" data-anchor-id="changelog">Changelog</h3>
 <p>9 Sep 24: Completed In-Class Exercise 4.</p>
+<p>12 Sep 24: Completed Day-of-Year animation plotting</p>
 </section>
 </section>
 <section id="importing-data-and-loading-package" class="level2">
 <h2 class="anchored" data-anchor-id="importing-data-and-loading-package">Importing data and loading package</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, raster, spatstat, sparr, tidyverse, tmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, raster, spatstat, sparr, tidyverse, tmap, animation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>kbb <span class="ot">=</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/raw"</span>, <span class="at">layer =</span> <span class="st">"Kepulauan_Bangka_Belitung"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -445,6 +452,7 @@ Evaluation
   Density range: [1.233458e-27, 8.202976e-10]</code></pre>
 </div>
 </div>
+<p>Plotting individual months:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tims <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">11</span>,<span class="dv">12</span>)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfcol =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>), <span class="at">mai=</span><span class="fu">c</span>(<span class="fl">0.3</span>,<span class="fl">0.3</span>,<span class="fl">0.3</span>,<span class="fl">0.3</span>))</span>
@@ -460,6 +468,163 @@ Evaluation
 </div>
 </div>
 </div>
+</section>
+<section id="computing-stkde-by-day-of-year-ver-1" class="level2">
+<h2 class="anchored" data-anchor-id="computing-stkde-by-day-of-year-ver-1">Computing STKDE by Day of Year (Ver 1)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Create ppp object </span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>fire_doy_ppp <span class="ot">=</span> fire_sf <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(DayofYear) <span class="sc">%&gt;%</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.ppp</span>() </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fire_doy_ppp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Marked planar point pattern:  741 points
+Average intensity 2.49258e-08 points per square unit
+
+Coordinates are given to 10 decimal places
+
+marks are numeric, of type 'double'
+Summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   10.0   213.0   258.0   245.9   287.0   352.0 
+
+Window: rectangle = [521564.1, 695791] x [9658137, 9828767] units
+                    (174200 x 170600 units)
+Window area = 29728200000 square units</code></pre>
+</div>
+</div>
+<p>Combine ppp and owin:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fire_doy_owin <span class="ot">=</span> fire_doy_ppp[kbb_owin] </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fire_doy_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Marked planar point pattern:  741 points
+Average intensity 6.424519e-08 points per square unit
+
+Coordinates are given to 10 decimal places
+
+marks are numeric, of type 'double'
+Summary:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   10.0   213.0   258.0   245.9   287.0   352.0 
+
+Window: polygonal boundary
+2 separate polygons (no holes)
+           vertices        area relative.area
+polygon 1     47493 11533600000      1.00e+00
+polygon 2       256      306427      2.66e-05
+enclosing rectangle: [512066.8, 705559.4] x [9655398, 9834006] units
+                     (193500 x 178600 units)
+Window area = 11533900000 square units
+Fraction of frame area: 0.334</code></pre>
+</div>
+</div>
+<p>Computing the Spatio-Temporal KDE:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>kde_doy <span class="ot">=</span> <span class="fu">spattemp.density</span>(fire_doy_owin) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Calculating trivariate smooth...Done.
+Edge-correcting...Done.
+Conditioning on time...Done.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(kde_doy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Spatiotemporal Kernel Density Estimate
+
+Bandwidths
+  h = 15102.47 (spatial)
+  lambda = 6.3198 (temporal)
+
+No. of observations
+  741 
+
+Spatial bound
+  Type: polygonal
+  2D enclosure: [512066.8, 705559.4] x [9655398, 9834006]
+
+Temporal bound
+  [10, 352]
+
+Evaluation
+  128 x 128 x 343 trivariate lattice
+  Density range: [3.959516e-27, 2.751287e-12]</code></pre>
+</div>
+</div>
+<p>Animated plotting:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>animation<span class="sc">::</span><span class="fu">saveGIF</span>(<span class="fu">plot</span>(kde_doy), <span class="at">movie.name =</span> <span class="st">"kde_doy1.gif"</span>, <span class="at">interval =</span> <span class="fl">0.1</span>, <span class="at">ani.width =</span> <span class="dv">600</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Output at: kde_doy1.gif</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p>Here is <em>kde_doy1.gif</em> imported directly through R studio:</p>
+<p><img src="kde_doy1.gif" class="img-fluid"></p>
+</section>
+<section id="computing-stkde-by-day-of-year-ver-2" class="level2">
+<h2 class="anchored" data-anchor-id="computing-stkde-by-day-of-year-ver-2">Computing STKDE by Day of Year (Ver 2)</h2>
+<p>Using <strong>BOOT.spattemp</strong> to determine spatial bandwidth and scalar temporal bandwidth:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>) </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">BOOT.spattemp</span>(fire_doy_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Initialising...Done.
+Optimising...
+h = 15102.47 ; lambda = 16.84806 
+h = 16612.72 ; lambda = 16.84806 
+h = 15102.47 ; lambda = 1527.095 
+h = 15480.03 ; lambda = 771.9715 
+h = 15668.81 ; lambda = 394.4098 
+h = 15763.2 ; lambda = 205.6289 
+h = 15810.4 ; lambda = 111.2385 
+h = 15833.99 ; lambda = 64.04328 
+h = 15845.79 ; lambda = 40.44567 
+h = 15851.69 ; lambda = 28.64687 
+h = 15863.49 ; lambda = 5.049258 
+h = 15854.64 ; lambda = 22.74746 
+h = 15860.54 ; lambda = 10.94866 
+h = 15859.07 ; lambda = 13.89836 
+h = 14348.82 ; lambda = 13.89836 
+h = 13216.87 ; lambda = 12.42351 
+h = 12460.27 ; lambda = 15.37321 
+h = 10760.88 ; lambda = 16.11064 
+h = 8875.282 ; lambda = 11.68608 
+h = 10432.08 ; lambda = 12.97658 
+h = 7976.084 ; lambda = 16.66371 
+h = 9286.281 ; lambda = 15.60366 
+h = 9615.08 ; lambda = 18.73771 
+h = 9206.581 ; lambda = 21.61828 
+h = 8140.483 ; lambda = 18.23073 
+h = 8795.582 ; lambda = 17.70071 
+h = 9124.381 ; lambda = 20.83477 
+h = 9164.856 ; lambda = 19.52699 
+h = 8345.358 ; lambda = 18.48998 
+h = 9297.65 ; lambda = 18.67578 
+h = 8928.375 ; lambda = 16.8495 
+h = 9105.736 ; lambda = 18.85762 
+Done.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         h     lambda 
+9105.73611   18.85762 </code></pre>
+</div>
+</div>
+<p>Computing spatio-temporal KDE</p>
+<p><code>kzk kde_doy = spattemp.density(fire_doy_owin, h = 9000, lambda = 19)} summary(kde_doy)</code></p>
+<p>Animated plotting</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>animation<span class="sc">::</span><span class="fu">saveGIF</span>(<span class="fu">plot</span>(kde_doy), <span class="at">movie.name =</span> <span class="st">"kde_doy2.gif"</span>, <span class="at">interval =</span> <span class="fl">0.2</span>, <span class="at">ani.width =</span> <span class="dv">600</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Output at: kde_doy2.gif</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p>Here is <em>kde_doy2.gif</em> imported directly through R studio:</p>
+<p><img src="kde_doy2.gif" class="img-fluid"></p>
 
 
 </section>
