@@ -1,0 +1,136 @@
+---
+title: "In-Class Exercise 5"
+author: "Dexter Wan"
+date: "September 16, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+## Description
+
+Learning to perform Spatial Weight and its Applications in R.
+
+### Changelog
+
+16 Sep 24: Completed In-Class Exercise 5.
+
+## Importing Data and Packages
+
+Import Packages:
+
+```{r}
+pacman::p_load(sf, spdep, tmap, tidyverse, knitr, GWmodel)
+```
+
+Import data and join them, selecting only relevant fields:
+
+```{r}
+#| eval: false
+# ^ To prevent from re-load during render
+hunan_sf = st_read(dsn = "data/geospatial", layer = "Hunan")
+hunan_2012 = read.csv("data/aspatial/HUnan_2012.csv")
+hunan_sf = left_join(hunan_sf, hunan_2012) %>%
+  select(1:3, 7, 15:16, 31, 32)
+```
+
+Write into rds format:
+
+```{r}
+#| eval: false
+write_rds(hunan_sf, "data/rds/hunan_sf.rds")
+```
+
+Read rds into R environment:
+
+```{r}
+hunan_sf = read_rds("data/rds/hunan_sf.rds") 
+```
+
+Convert into Spatial Polygon Data Frame, as GWmodel is built around sp:
+
+```{r}
+hunan_sp = hunan_sf %>% as_Spatial()
+```
+
+## Geographically Weighted Summary Statistics with Adaptive Bandwidth
+
+Determine adaptive bandwidth:
+
+```{r}
+#Cross-validation 
+bw_CV = bw.gwr(GDPPC ~ 1,
+                data = hunan_sp,
+                approach = "CV",
+                adaptive = TRUE,  #enable adaptive bandwidth
+                kernel = "bisquare",
+                longlat = T  #set to TRUE, transforms data to projected CRS in KM
+                )
+#AIC
+bw_AIC = bw.gwr(GDPPC ~ 1,
+                data = hunan_sp,
+                approach = "AIC",
+                adaptive = TRUE,  #enable adaptive bandwidth
+                kernel = "bisquare",
+                longlat = T  #set to TRUE, transforms data to projected CRS in KM
+                )
+```
+
+Fixed Bandwidth:
+
+```{r}
+#Cross-validation 
+bw_CV_Fix = bw.gwr(GDPPC ~ 1,
+                data = hunan_sp,
+                approach = "CV",
+                adaptive = FALSE,  #disable adaptive bandwidth
+                kernel = "bisquare",
+                longlat = T
+                )
+#AIC
+bw_AIC_Fix = bw.gwr(GDPPC ~ 1,
+                data = hunan_sp,
+                approach = "AIC",
+                adaptive = FALSE,  #disable adaptive bandwidth
+                kernel = "bisquare",
+                longlat = T
+                )
+```
+
+Compute geographically weighted summary statistics:
+
+```{r}
+gwstat = gwss(data = hunan_sp,
+              vars = "GDPPC",
+              bw = bw_AIC,
+              kernel = "bisquare",
+              adaptive = TRUE,
+              longlat = T
+              )
+```
+
+Prepare the output data:
+
+```{r}
+gwstat_df = as.data.frame(gwstat$SDF)
+#Append data to original sf file
+hunan_gstat = cbind(hunan_sf, gwstat_df)
+```
+
+Visualising the stats:
+
+```{r}
+#| fig-width: 11
+tm_shape(hunan_gstat) +
+  tm_fill("GDPPC_LM", n = 5, style = "quantile") +
+  tm_borders(alpha = 1)+
+  tm_layout(main.title = "Distribution of geographically weighted mean",
+            main.title.position = "center",
+            main.title.size = 1.5,
+            legend.title.size = 1.2,
+            legend.height = 1.5,
+            legend.width = 1.5,
+            frame = TRUE)
+```
