@@ -19,6 +19,8 @@ Learning to perform Spatio-Temporial Point Pattern Analysis in R.
 
 12 Sep 24: Completed Day-of-Year animation plotting
 
+16 Sep 24: Added "eval: false" to animation generation code chunks.
+
 ## Importing data and loading package
 
 ```{r}
@@ -146,6 +148,7 @@ summary(kde_doy)
 Animated plotting:
 
 ```{r}
+#| eval: false
 animation::saveGIF(plot(kde_doy), movie.name = "kde_doy1.gif", interval = 0.1, ani.width = 600)
 ```
 
@@ -164,13 +167,15 @@ BOOT.spattemp(fire_doy_owin)
 
 Computing spatio-temporal KDE
 
-```{r} kde_doy = spattemp.density(fire_doy_owin, h = 9000, lambda = 19)}
+```{r}
+kde_doy = spattemp.density(fire_doy_owin, h = 9000, lambda = 19) 
 summary(kde_doy)
 ```
 
 Animated plotting
 
 ```{r}
+#| eval: false
 animation::saveGIF(plot(kde_doy), movie.name = "kde_doy2.gif", interval = 0.2, ani.width = 600)
 ```
 
