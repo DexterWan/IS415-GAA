@@ -11,11 +11,13 @@ execute:
 
 ## Description
 
-Learning to perform Spatio-Temporial Point Pattern Analysis in R.
+Learning Spatial Weights and Applications in R.
 
 ### Changelog
 
 12 Sep 24: Completed Hands-on Exercise 5.
+
+16 Sep 24: Updated description.
 
 ## Importing Data and setting up R Environment
 
