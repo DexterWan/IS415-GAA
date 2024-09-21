@@ -1,0 +1,711 @@
+---
+title: "Take-Home Exercise 1"
+author: "Dexter Wan"
+date: "September 5, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+## Background
+
+Armed conflict has been on the rise since about 2012, after a decline in the 1990s and early 2000s. First came conflicts in Libya, Syria and Yemen, triggered by the 2011 Arab uprisings. Libya’s instability spilled south, helping set off a protracted crisis in the Sahel region. A fresh wave of major combat followed: the 2020 Azerbaijani-Armenian war over the Nagorno-Karabakh enclave, horrific fighting in Ethiopia’s northern Tigray region that began weeks later, the conflict prompted by the Myanmar army’s 2021 power grab and Russia’s 2022 assault on Ukraine. Add to those 2023’s devastation in Sudan and Gaza. Around the globe, more people are dying in fighting, being forced from their homes or in need of life-saving aid than in decades.
+
+We will be diving into the armed conflict in Myanmar, following the army's coup that lead to Myanmar's military rule in 2021, where Myanmar's previous leader, [Aung San Suu Kyi]{.underline}, was placed under arrest (Maizland, 2022). This has lead to civilian killings and arrest for those opposing the military, leading to over 10,000 detainees since the 2021 coup, according to a United Nation report (Farge & Mantovani, 2024). Specifically, we will be looking at the trends of violence shown in Myanmar and try to explain any patterns observed.
+
+## The Data
+
+### **Armed conflict data**
+
+For the purpose of this assignment, armed conflict data of Myanmar between 2021-2024 from [Armed Conflict Location & Event Data (ACLED)](https://acleddata.com/), an independent, impartial, international non-profit organization collecting data on violent conflict and protest in all countries and territories in the world, is used.
+
+### GIS Data
+
+I have taken the Mynamar District Boundaries (Admin2) from <https://geonode.themimu.info/layers/geonode%3Ammr_polbnda_adm2_250k_mimu>
+
+## Importing Packages and Data
+
+Before we start, we need to import the data and ensure we modify it as needed. Firstly, we start of by loading in the relevant packages that will be needed.
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap, raster, spatstat, sparr, animation)
+```
+
+Now, we can load in our data. Let's start with the data from ACLED.
+
+```{r}
+#| eval: false
+acled_sf = read_csv("data/raw/2021-01-01-2024-06-30-Southeast_Asia-Myanmar.csv") %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
+  st_transform(crs = 32647) %>%
+  mutate(event_date = dmy(event_date)) %>%
+  mutate(event_quarter = quarter(event_date)) %>%
+  mutate(event_year = year(event_date)) 
+```
+
+Above we have taken the data and transformed it into a **sf data frame** using st_as_sf, before transforming it to the projection of WGS 84 / UTM zone 47N, one of the projection CRS for Myanmar. I have also modified the event_date field to be in a Date format for R to recognise it as a date, before adding in 2 additional fields: the year of the event (event_year), and which quarter of the year the event takes place (event_quarter).
+
+Now, let us import the boundary data.
+
+```{r}
+#| eval: false
+mimu_sub = st_read(dsn = "data/raw/MIMU_District_Admin2",
+                   layer = "mmr_polbnda_adm2_250k_mimu") 
+```
+
+Now we have the boundary data, but we need to verify its CRS.
+
+```{r}
+#| eval: false
+st_crs(mimu_sub)
+```
+
+The data is projected to 4326, which is the standard for WGS 84. We should project it to 32647 as well.
+
+```{r}
+#| eval: false
+mimu_sub = st_transform(mimu_sub, crs = 32647)
+```
+
+In order to preserve the CRS transformation and mutation of data, I shall write them into an rds file. This reduces the need to continually transform them every time this page is rendered.
+
+```{r}
+#| eval: false
+write_rds(acled_sf, "data/rds/acled_sf.rds")
+write_rds(mimu_sub, "data/rds/mimu_sub.rds")
+```
+
+With the files written, I can put "eval: false" on the above code chunks. From now on, we will simply need to read the rds files to obtain back the data.
+
+```{r}
+acled_sf = read_rds("data/rds/acled_sf.rds")
+mimu_sub = read_rds("data/rds/mimu_sub.rds")
+```
+
+## Data Wrangling
+
+### Filtering Data
+
+Firstly, let us divide the ACLED data into its respective year and quarters. This is done through filtering the event_year and event_quarter
+
+```{r}
+acled_sf_21_Q1 = acled_sf %>% filter(event_year == 2021, event_quarter == 1)
+acled_sf_21_Q2 = acled_sf %>% filter(event_year == 2021, event_quarter == 2)
+acled_sf_21_Q3 = acled_sf %>% filter(event_year == 2021, event_quarter == 3)
+acled_sf_21_Q4 = acled_sf %>% filter(event_year == 2021, event_quarter == 4)
+
+acled_sf_22_Q1 = acled_sf %>% filter(event_year == 2022, event_quarter == 1)
+acled_sf_22_Q2 = acled_sf %>% filter(event_year == 2022, event_quarter == 2)
+acled_sf_22_Q3 = acled_sf %>% filter(event_year == 2022, event_quarter == 3)
+acled_sf_22_Q4 = acled_sf %>% filter(event_year == 2022, event_quarter == 4)
+
+acled_sf_23_Q1 = acled_sf %>% filter(event_year == 2023, event_quarter == 1)
+acled_sf_23_Q2 = acled_sf %>% filter(event_year == 2023, event_quarter == 2)
+acled_sf_23_Q3 = acled_sf %>% filter(event_year == 2023, event_quarter == 3)
+acled_sf_23_Q4 = acled_sf %>% filter(event_year == 2023, event_quarter == 4)
+
+acled_sf_24_Q1 = acled_sf %>% filter(event_year == 2024, event_quarter == 1)
+acled_sf_24_Q2 = acled_sf %>% filter(event_year == 2024, event_quarter == 2)
+```
+
+Now, for future reference, let us do a count of the types of events. The input "sort = TRUE" will arrange it in a descending order
+
+```{r}
+acled_sf %>% count(event_type, sort = TRUE)
+```
+
+As we can see, out of the 6 event types, there seem to be less riots. As such, we will not be focusing as much on that and instead be focused more on the other 5 event types. I will import them as their own sf data frames.
+
+```{r}
+protests_sf = acled_sf %>% filter(event_type == "Protests")
+battles_sf = acled_sf %>% filter(event_type == "Battles")
+develop_sf = acled_sf %>% filter(event_type == "Strategic developments")
+violence_sf = acled_sf %>% filter(event_type == "Violence against civilians")
+explosions_sf = acled_sf %>% filter(event_type == "Explosions/Remote violence")
+```
+
+### Creating ppp and owin objects
+
+In order to use the data, we need to transform them into **ppp** objects.
+
+```{r}
+acled_ppp = as.ppp(acled_sf)
+
+acled_ppp_21_Q1 = as.ppp(acled_sf_21_Q1)
+acled_ppp_21_Q2 = as.ppp(acled_sf_21_Q2)
+acled_ppp_21_Q3 = as.ppp(acled_sf_21_Q3)
+acled_ppp_21_Q4 = as.ppp(acled_sf_21_Q4)
+
+acled_ppp_22_Q1 = as.ppp(acled_sf_22_Q1)
+acled_ppp_22_Q2 = as.ppp(acled_sf_22_Q2)
+acled_ppp_22_Q3 = as.ppp(acled_sf_22_Q3)
+acled_ppp_22_Q4 = as.ppp(acled_sf_22_Q4)
+
+acled_ppp_23_Q1 = as.ppp(acled_sf_23_Q1)
+acled_ppp_23_Q2 = as.ppp(acled_sf_23_Q2)
+acled_ppp_23_Q3 = as.ppp(acled_sf_23_Q3)
+acled_ppp_23_Q4 = as.ppp(acled_sf_23_Q4)
+
+acled_ppp_24_Q1 = as.ppp(acled_sf_24_Q1)
+acled_ppp_24_Q2 = as.ppp(acled_sf_24_Q2)
+```
+
+Now, we will create the **owin** object using our boundary data, and attach it to the ppp objects.
+
+```{r}
+mimu_sub_owin = as.owin(mimu_sub)
+
+mm_ppp_21_Q1 = acled_ppp_21_Q1[mimu_sub_owin] 
+mm_ppp_21_Q2 = acled_ppp_21_Q2[mimu_sub_owin]
+mm_ppp_21_Q3 = acled_ppp_21_Q3[mimu_sub_owin]
+mm_ppp_21_Q4 = acled_ppp_21_Q4[mimu_sub_owin]
+
+mm_ppp_22_Q1 = acled_ppp_22_Q1[mimu_sub_owin] 
+mm_ppp_22_Q2 = acled_ppp_22_Q2[mimu_sub_owin]
+mm_ppp_22_Q3 = acled_ppp_22_Q3[mimu_sub_owin]
+mm_ppp_22_Q4 = acled_ppp_22_Q4[mimu_sub_owin]
+
+mm_ppp_23_Q1 = acled_ppp_23_Q1[mimu_sub_owin] 
+mm_ppp_23_Q2 = acled_ppp_23_Q2[mimu_sub_owin]
+mm_ppp_23_Q3 = acled_ppp_23_Q3[mimu_sub_owin]
+mm_ppp_23_Q4 = acled_ppp_23_Q4[mimu_sub_owin]
+
+mm_ppp_24_Q1 = acled_ppp_24_Q1[mimu_sub_owin] 
+mm_ppp_24_Q2 = acled_ppp_24_Q2[mimu_sub_owin]
+```
+
+As the data will be in meters, I will re-scale them to **km**, this is for the KDE layers.
+
+```{r}
+mm_ppp_21_Q1.km <- rescale.ppp(mm_ppp_21_Q1, 1000, "km")
+mm_ppp_21_Q2.km <- rescale.ppp(mm_ppp_21_Q2, 1000, "km")
+mm_ppp_21_Q3.km <- rescale.ppp(mm_ppp_21_Q3, 1000, "km")
+mm_ppp_21_Q4.km <- rescale.ppp(mm_ppp_21_Q4, 1000, "km")
+
+mm_ppp_22_Q1.km <- rescale.ppp(mm_ppp_22_Q1, 1000, "km")
+mm_ppp_22_Q2.km <- rescale.ppp(mm_ppp_22_Q2, 1000, "km")
+mm_ppp_22_Q3.km <- rescale.ppp(mm_ppp_22_Q3, 1000, "km")
+mm_ppp_22_Q4.km <- rescale.ppp(mm_ppp_22_Q4, 1000, "km")
+
+mm_ppp_23_Q1.km <- rescale.ppp(mm_ppp_23_Q1, 1000, "km")
+mm_ppp_23_Q2.km <- rescale.ppp(mm_ppp_23_Q2, 1000, "km")
+mm_ppp_23_Q3.km <- rescale.ppp(mm_ppp_23_Q3, 1000, "km")
+mm_ppp_23_Q4.km <- rescale.ppp(mm_ppp_23_Q4, 1000, "km")
+
+mm_ppp_24_Q1.km <- rescale.ppp(mm_ppp_24_Q1, 1000, "km")
+mm_ppp_24_Q2.km <- rescale.ppp(mm_ppp_24_Q2, 1000, "km")
+```
+
+Now, using the main ACLED data, we can check for duplicates.
+
+```{r}
+any(duplicated(acled_ppp))
+```
+
+There seems to be no duplicates, which allows us to continue using the data and its subsets. I will grab a quarter and plot it out to see how it looks like.
+
+```{r}
+#| fig-width: 12
+plot(mm_ppp_21_Q1)
+```
+
+As we can see, there is a lot of data for just 1 quarter. However, some patterns are already visible, such as the heavy amount of events happening in the centre of Myanmar. To get a better look of this, we should derive the KDE layers.
+
+## Computing KDE Layers
+
+### Testing Kernel Methods
+
+Let us compute the KDE for Myanmar's ACLED data using *bw.diggle*.
+
+```{r}
+#| fig-width: 12
+kde_mm_21_Q1.bw = density(mm_ppp_21_Q1.km, sigma = bw.diggle, edge = TRUE, kernel = "gaussian")
+plot(kde_mm_21_Q1.bw)
+```
+
+The data is not visible, using *bw.diggle* to get the bandwidth is not sufficient. We need to test out using a larger bandwidth. Here I attempt to use the *adaptive.density()* method:
+
+```{r}
+mm_adaptive = adaptive.density(mm_ppp_21_Q1, method="kernel")
+plot(mm_adaptive)
+```
+
+The data is still not visible. we should find the larger sigma value using adaptive bandwidth methods.
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+kde_mm_21_Q1.ppl = density(mm_ppp_21_Q1.km, sigma = bw.ppl, edge = TRUE, kernel = "gaussian")
+kde_mm_21_Q1.CvL = density(mm_ppp_21_Q1.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_21_Q1.scott = density(mm_ppp_21_Q1.km, sigma = bw.scott, edge = TRUE, kernel = "gaussian")
+par(mfrow=c(2,2))
+plot(kde_mm_21_Q1.ppl)
+plot(kde_mm_21_Q1.CvL)
+plot(kde_mm_21_Q1.scott)
+```
+
+We do see more representation using *bw.scott()* and *bw.CvL()*, and I will elect to use the bw.CvL for the remaining KDE Layers for better clarity of the data.
+
+### Plotting monthly KDE Layers
+
+I shall use *bw.CvL()* for the remaining quarterly KDE layers.
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+kde_mm_21_Q1.CvL = density(mm_ppp_21_Q1.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_21_Q2.CvL = density(mm_ppp_21_Q2.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_21_Q3.CvL = density(mm_ppp_21_Q3.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_21_Q4.CvL = density(mm_ppp_21_Q4.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+par(mfrow = c(2,2))
+plot(kde_mm_21_Q1.CvL)
+plot(kde_mm_21_Q2.CvL)
+plot(kde_mm_21_Q3.CvL)
+plot(kde_mm_21_Q4.CvL)
+mtext("Myanmar Conflict 2021", side = 3, line = -2, outer = TRUE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+kde_mm_22_Q1.CvL = density(mm_ppp_22_Q1.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_22_Q2.CvL = density(mm_ppp_22_Q2.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_22_Q3.CvL = density(mm_ppp_22_Q3.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_22_Q4.CvL = density(mm_ppp_22_Q4.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+par(mfrow = c(2,2))
+plot(kde_mm_22_Q1.CvL)
+plot(kde_mm_22_Q2.CvL)
+plot(kde_mm_22_Q3.CvL)
+plot(kde_mm_22_Q4.CvL)
+mtext("Myanmar Conflict 2022", side = 3, line = -1, outer = TRUE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+kde_mm_23_Q1.CvL = density(mm_ppp_23_Q1.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_23_Q2.CvL = density(mm_ppp_23_Q2.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_23_Q3.CvL = density(mm_ppp_23_Q3.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_23_Q4.CvL = density(mm_ppp_23_Q4.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+par(mfrow = c(2,2))
+plot(kde_mm_23_Q1.CvL)
+plot(kde_mm_23_Q2.CvL)
+plot(kde_mm_23_Q3.CvL)
+plot(kde_mm_23_Q4.CvL)
+mtext("Myanmar Conflict 2023", side = 3, line = -2, outer = TRUE)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+kde_mm_24_Q1.CvL = density(mm_ppp_24_Q1.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+kde_mm_24_Q2.CvL = density(mm_ppp_24_Q2.km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+par(mfrow = c(1,2))
+plot(kde_mm_24_Q1.CvL)
+plot(kde_mm_24_Q2.CvL)
+mtext("Myanmar Conflict 2024", side = 3, line = -2, outer = TRUE)
+```
+
+## 2nd Order Spatial Point Analysis
+
+Based on the observations above, we can see how there is high clustering of events occurring within Myanmar. This is particular around 2023, Q2, where events seem to be highly clustered around 2 areas. However, we see a further spread of such events across 2023, Q4, before it eventually starts to reduce in 2024. We should observe the movement of these events in 2 ways:
+
+1.  How much clustering do we see from 2023 Q2 to Q4? This will show the movement of events occurring,
+2.  What are the event types that are moving? This could help us visualise the pattern of attacks.
+
+Our second point can be visualised through spatio-temporal point pattern analysis. Now using 2nd order spatial point analysis, we can observe our first point. This will be done using G-Function. F-function will not give us a complete picture, while K and L-functions are too computationally expensive.
+
+```{r}
+acled_sf %>% filter(event_year == 2023) %>% count(event_quarter)
+```
+
+Based on the count, we do see a growth in the number of events occuring from Q2 to Q4. Now, we shall calculate the envelope and see how the observed data compares. This will be done using G-Function.
+
+```{r}
+G_mm_23_Q2.csr = envelope(mm_ppp_23_Q2.km, Gest, nsim = 99)
+G_mm_23_Q3.csr = envelope(mm_ppp_23_Q3.km, Gest, nsim = 99)
+G_mm_23_Q4.csr = envelope(mm_ppp_23_Q4.km, Gest, nsim = 99)
+```
+
+Now let's plot the three quarter's G-values side-by-side.
+
+```{r}
+#| fig-width: 12
+#| fig-height: 4
+par(mfrow = c(1,3))
+plot(G_mm_23_Q2.csr)
+plot(G_mm_23_Q3.csr)
+plot(G_mm_23_Q4.csr)
+```
+
+As expected, we do see more clustering in Q3 in the range of \<500m, but Q2 and Q4 are generally around the same. Given the increase in the number of attacks across the three quarters, we could attribute Q4 to be an increase in the number of attacks instead, thus having the same relative G-value despite the KDE layer suggesting more dispersal.
+
+## Computing Spatio-Temporal KDE Layers
+
+Now let us look at the 5 event types individually for our Spatio-Temporal KDE.
+
+### Protests
+
+First, I shall filter them into individual years, then sort them by their quarters then convert them into **ppp** objects. This is to allow a ease of calculating the STKDE using *spattemp.density().* To ensure that the objects are created correctly, I will print the summary for the 2021 data.
+
+```{r}
+protest_21_sf = protests_sf %>% filter(event_year == 2021) %>% dplyr::select(event_quarter)
+protest_22_sf = protests_sf %>% filter(event_year == 2022) %>% dplyr::select(event_quarter)
+protest_23_sf = protests_sf %>% filter(event_year == 2023) %>% dplyr::select(event_quarter)
+protest_24_sf = protests_sf %>% filter(event_year == 2024) %>% dplyr::select(event_quarter)
+protest_21_ppp = as.ppp(protest_21_sf)
+protest_22_ppp = as.ppp(protest_22_sf)
+protest_23_ppp = as.ppp(protest_23_sf)
+protest_24_ppp = as.ppp(protest_24_sf)
+summary(protest_21_ppp)
+```
+
+Now, I will attach the boundary data to the **ppp** objects, and calculate the STKDE.
+
+```{r}
+protest_21_owin = protest_21_ppp[mimu_sub_owin]
+protest_22_owin = protest_22_ppp[mimu_sub_owin]
+protest_23_owin = protest_23_ppp[mimu_sub_owin]
+protest_24_owin = protest_24_ppp[mimu_sub_owin]
+
+protest_21_st_kde= spattemp.density(protest_21_owin)
+protest_22_st_kde= spattemp.density(protest_22_owin)
+protest_23_st_kde= spattemp.density(protest_23_owin)
+protest_24_st_kde= spattemp.density(protest_24_owin)
+
+summary(protest_21_st_kde)
+```
+
+Finally, I shall plot out the individual quarters. I will utilise for-loops to print out the STKDE layers individually so that I can accurately label each layer.
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+par(mfrow = c(4,4))
+for(i in c(1,2,3,4)){
+  plot(protest_21_st_kde, i, override.par = FALSE, main = paste("2021 - Q", i))
+}
+for(i in c(1,2,3,4)){
+  plot(protest_22_st_kde, i, override.par = FALSE, main = paste("2022 - Q", i))
+} 
+for(i in c(1,2,3,4)){
+  plot(protest_23_st_kde, i, override.par = FALSE, main = paste("2023 - Q", i))
+} 
+for(i in c(1,2)){
+  plot(protest_24_st_kde, i, override.par = FALSE, main = paste("2024 - Q", i))
+}
+```
+
+Now, I shall repeat the process for the remaining 4 event types.
+
+### Battles
+
+```{r}
+battle_21_sf = battles_sf %>% filter(event_year == 2021) %>% dplyr::select(event_quarter)
+battle_22_sf = battles_sf %>% filter(event_year == 2022) %>% dplyr::select(event_quarter)
+battle_23_sf = battles_sf %>% filter(event_year == 2023) %>% dplyr::select(event_quarter)
+battle_24_sf = battles_sf %>% filter(event_year == 2024) %>% dplyr::select(event_quarter)
+battle_21_ppp = as.ppp(battle_21_sf)
+battle_22_ppp = as.ppp(battle_22_sf)
+battle_23_ppp = as.ppp(battle_23_sf)
+battle_24_ppp = as.ppp(battle_24_sf)
+summary(battle_21_ppp)
+```
+
+```{r}
+battle_21_owin = battle_21_ppp[mimu_sub_owin]
+battle_22_owin = battle_22_ppp[mimu_sub_owin]
+battle_23_owin = battle_23_ppp[mimu_sub_owin]
+battle_24_owin = battle_24_ppp[mimu_sub_owin]
+
+battle_21_st_kde= spattemp.density(battle_21_owin)
+battle_22_st_kde= spattemp.density(battle_22_owin)
+battle_23_st_kde= spattemp.density(battle_23_owin)
+battle_24_st_kde= spattemp.density(battle_24_owin)
+
+summary(battle_21_st_kde)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+par(mfrow = c(4,4))
+for(i in c(1,2,3,4)){
+  plot(battle_21_st_kde, i, override.par = FALSE, main = paste("2021 - Q", i))
+} 
+for(i in c(1,2,3,4)){
+  plot(battle_22_st_kde, i, override.par = FALSE, main = paste("2022 - Q", i))
+} 
+for(i in c(1,2,3,4)){
+  plot(battle_23_st_kde, i, override.par = FALSE, main = paste("2023 - Q", i))
+} 
+for(i in c(1,2)){
+  plot(battle_24_st_kde, i, override.par = FALSE, main = paste("2024 - Q", i))
+}
+```
+
+### Strategic Developments
+
+```{r}
+develop_21_sf = develop_sf %>% filter(event_year == 2021) %>% dplyr::select(event_quarter)
+develop_22_sf = develop_sf %>% filter(event_year == 2022) %>% dplyr::select(event_quarter)
+develop_23_sf = develop_sf %>% filter(event_year == 2023) %>% dplyr::select(event_quarter)
+develop_24_sf = develop_sf %>% filter(event_year == 2024) %>% dplyr::select(event_quarter)
+develop_21_ppp = as.ppp(develop_21_sf)
+develop_22_ppp = as.ppp(develop_22_sf)
+develop_23_ppp = as.ppp(develop_23_sf)
+develop_24_ppp = as.ppp(develop_24_sf)
+summary(develop_21_ppp)
+```
+
+```{r}
+develop_21_owin = develop_21_ppp[mimu_sub_owin]
+develop_22_owin = develop_22_ppp[mimu_sub_owin]
+develop_23_owin = develop_23_ppp[mimu_sub_owin]
+develop_24_owin = develop_24_ppp[mimu_sub_owin]
+
+develop_21_st_kde= spattemp.density(develop_21_owin)
+develop_22_st_kde= spattemp.density(develop_22_owin)
+develop_23_st_kde= spattemp.density(develop_23_owin)
+develop_24_st_kde= spattemp.density(develop_24_owin)
+
+summary(develop_21_st_kde)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+par(mfrow = c(4,4))
+for(i in c(1,2,3,4)){
+  plot(develop_21_st_kde, i, override.par = FALSE, main = paste("2021 - Q", i))
+} 
+for(i in c(1,2,3,4)){
+  plot(develop_22_st_kde, i, override.par = FALSE, main = paste("2022 - Q", i))
+} 
+for(i in c(1,2,3,4)){
+  plot(develop_23_st_kde, i, override.par = FALSE, main = paste("2023 - Q", i))
+} 
+for(i in c(1,2)){
+  plot(develop_24_st_kde, i, override.par = FALSE, main = paste("2024 - Q", i))
+}
+```
+
+### Violence against civilians
+
+```{r}
+violence_21_sf = violence_sf %>% filter(event_year == 2021) %>% dplyr::select(event_quarter)
+violence_22_sf = violence_sf %>% filter(event_year == 2022) %>% dplyr::select(event_quarter)
+violence_23_sf = violence_sf %>% filter(event_year == 2023) %>% dplyr::select(event_quarter)
+violence_24_sf = violence_sf %>% filter(event_year == 2024) %>% dplyr::select(event_quarter)
+violence_21_ppp = as.ppp(violence_21_sf)
+violence_22_ppp = as.ppp(violence_22_sf)
+violence_23_ppp = as.ppp(violence_23_sf)
+violence_24_ppp = as.ppp(violence_24_sf)
+summary(violence_21_ppp)
+```
+
+```{r}
+violence_21_owin = violence_21_ppp[mimu_sub_owin]
+violence_22_owin = violence_22_ppp[mimu_sub_owin]
+violence_23_owin = violence_23_ppp[mimu_sub_owin]
+violence_24_owin = violence_24_ppp[mimu_sub_owin]
+
+violence_21_st_kde= spattemp.density(violence_21_owin)
+violence_22_st_kde= spattemp.density(violence_22_owin)
+violence_23_st_kde= spattemp.density(violence_23_owin)
+violence_24_st_kde= spattemp.density(violence_24_owin)
+
+summary(violence_21_st_kde)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+par(mfrow = c(4,4))
+for(i in c(1,2,3,4)){
+  plot(violence_21_st_kde, i, override.par = FALSE, main = paste("2021 - Q", i))
+} 
+for(i in c(1,2,3,4)){
+  plot(violence_22_st_kde, i, override.par = FALSE, main = paste("2022 - Q", i))
+} 
+for(i in c(1,2,3,4)){
+  plot(violence_23_st_kde, i, override.par = FALSE, main = paste("2023 - Q", i))
+} 
+for(i in c(1,2)){
+  plot(violence_24_st_kde, i, override.par = FALSE, main = paste("2024 - Q", i))
+}
+```
+
+### Explosions/Remote Violence
+
+```{r}
+explosions_21_sf = explosions_sf %>% filter(event_year == 2021) %>% dplyr::select(event_quarter)
+explosions_22_sf = explosions_sf %>% filter(event_year == 2022) %>% dplyr::select(event_quarter)
+explosions_23_sf = explosions_sf %>% filter(event_year == 2023) %>% dplyr::select(event_quarter)
+explosions_24_sf = explosions_sf %>% filter(event_year == 2024) %>% dplyr::select(event_quarter)
+explosions_21_ppp = as.ppp(explosions_21_sf)
+explosions_22_ppp = as.ppp(explosions_22_sf)
+explosions_23_ppp = as.ppp(explosions_23_sf)
+explosions_24_ppp = as.ppp(explosions_24_sf)
+summary(explosions_21_ppp)
+```
+
+```{r}
+explosions_21_owin = explosions_21_ppp[mimu_sub_owin]
+explosions_22_owin = explosions_22_ppp[mimu_sub_owin]
+explosions_23_owin = explosions_23_ppp[mimu_sub_owin]
+explosions_24_owin = explosions_24_ppp[mimu_sub_owin]
+
+explosions_21_st_kde= spattemp.density(explosions_21_owin)
+explosions_22_st_kde= spattemp.density(explosions_22_owin)
+explosions_23_st_kde= spattemp.density(explosions_23_owin)
+explosions_24_st_kde= spattemp.density(explosions_24_owin)
+
+summary(explosions_21_st_kde)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+par(mfrow = c(4,4))
+for(i in c(1,2,3,4)){
+  plot(explosions_21_st_kde, i, override.par = FALSE, main = paste("2021 - Q", i))
+} 
+for(i in c(1,2,3,4)){
+  plot(explosions_22_st_kde, i, override.par = FALSE, main = paste("2022 - Q", i))
+} 
+for(i in c(1,2,3,4)){
+  plot(explosions_23_st_kde, i, override.par = FALSE, main = paste("2023 - Q", i))
+} 
+for(i in c(1,2)){
+  plot(explosions_24_st_kde, i, override.par = FALSE, main = paste("2024 - Q", i))
+}
+```
+
+## 2nd Order Spatio-Temporal Point Pattern Analysis
+
+Based on the 5 event types' Spatio-Temporal KDE layers, we can see a growing trend in Violence and Protests, while surprisingly a downwards trend for Battles, Strategic Developments and Explosions/Remote Violence. However, it is crucial to know if there is an actual decline in these three downwards trends, as it could be attributed to simply dispersal of events. We shall use G-Function to analyse this by comparing the 2024 Q2 results with the results from 2023 Q2, to see if over a year there is less clustering and overall less events occurring.
+
+```{r}
+acled_sf %>% filter(event_year == 2023, event_quarter == 2) %>% count(event_type, sort = TRUE)
+```
+
+```{r}
+acled_sf %>% filter(event_year == 2024, event_quarter == 2) %>% count(event_type, sort = TRUE)
+```
+
+Based on the count, we can observe the difference in the number of events for each of our 3 categories. Explosions/Remote Violence and Battles increased, while Strategic Developments saw a decrease. With this in mind, lets look at their G-function results. I shall filter out the relevant year and quarter for the 3 events, and convert them into **ppp** objects.
+
+```{r}
+battle_ppp_23_Q2 = battles_sf %>% filter(event_year == 2023, event_quarter == 2) %>% as.ppp()
+battle_ppp_24_Q2 = battles_sf %>% filter(event_year == 2024, event_quarter == 2) %>% as.ppp()
+
+develop_ppp_23_Q2 = develop_sf %>% filter(event_year == 2023, event_quarter == 2) %>% as.ppp()
+develop_ppp_24_Q2 = develop_sf %>% filter(event_year == 2024, event_quarter == 2) %>% as.ppp()
+
+explosions_ppp_23_Q2 = explosions_sf %>% filter(event_year == 2023, event_quarter == 2) %>% as.ppp()
+explosions_ppp_24_Q2 = explosions_sf %>% filter(event_year == 2024, event_quarter == 2) %>% as.ppp()
+```
+
+Now, I shall attach the boundary data to the **ppp** objects.
+
+```{r}
+battle_ppp_23_Q2 = battle_ppp_23_Q2[mimu_sub_owin]
+battle_ppp_24_Q2 = battle_ppp_24_Q2[mimu_sub_owin]
+
+develop_ppp_23_Q2 = develop_ppp_23_Q2[mimu_sub_owin]
+develop_ppp_24_Q2 = develop_ppp_24_Q2[mimu_sub_owin]
+
+explosions_ppp_23_Q2 = explosions_ppp_23_Q2[mimu_sub_owin]
+explosions_ppp_24_Q2 = explosions_ppp_24_Q2[mimu_sub_owin]
+```
+
+Finally, lets calculate and plot out the G-function results.
+
+```{r}
+battle_G_23_Q2.csr = envelope(battle_ppp_23_Q2, Gest, nsim = 99)
+battle_G_24_Q2.csr = envelope(battle_ppp_24_Q2, Gest, nsim = 99)
+
+develop_G_23_Q2.csr = envelope(develop_ppp_23_Q2, Gest, nsim = 99)
+develop_G_24_Q2.csr = envelope(develop_ppp_24_Q2, Gest, nsim = 99)
+
+explosions_G_23_Q2.csr = envelope(explosions_ppp_23_Q2, Gest, nsim = 99)
+explosions_G_24_Q2.csr = envelope(explosions_ppp_24_Q2, Gest, nsim = 99)
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+par(mfrow = c(3,2))
+plot(battle_G_23_Q2.csr)
+plot(battle_G_24_Q2.csr)
+
+plot(develop_G_23_Q2.csr)
+plot(develop_G_24_Q2.csr)
+
+plot(explosions_G_23_Q2.csr)
+plot(explosions_G_24_Q2.csr)
+```
+
+For Strategic Developments and Explosions/Remote Violence, we do see slightly less clustering, especially \<500m. This aligns with our hypothesis that events are more dispersed across Myanmar, however, not by much. The surprise was the increase in clustering witnessed for Battles. This shows that there is both an increase in the number of events while still being highly concentrated around specific areas.
+
+## Plotting on OpenStreetMap
+
+I have attempted to plot the data onto OpenStreetMap. I convert the KDE data into **raster** and project it using the EPSG code 32647.
+
+```{r}
+#| fig-width: 12
+tmap_mode("view")
+kde_mm_24_Q2_CvL_raster = raster(kde_mm_24_Q2.CvL)
+projection(kde_mm_24_Q2_CvL_raster) = CRS("+init=EPSG:32647")
+tm_basemap(leaflet::providers$OpenStreetMap) +
+  tm_shape(kde_mm_24_Q2_CvL_raster) +
+  tm_raster("layer") 
+tmap_mode("plot")
+```
+
+I am unsure why the coordinates are not matching.
+
+## Observations
+
+Firstly, we can come to the conclusion that majority of the fight occurs in the northern and southern part of Myanmar. However, one thing interesting is the lack of events occurring near the center. Ann San Suu Kyi was arrested and kept in **Nay Pyi Taw** (Maizland, 2021), the capital of Myanmar, where she seems to have remained after moving from prison to house arrest in 2024 (Ratcliffe, 2024).
+
+[![A Map of Myanmar, taken from Council on Foreign Relations (CFR)](images/clipboard-1508579045.png)](https://www.cfr.org/backgrounder/myanmar-history-coup-military-rule-ethnic-conflict-rohingya#chapter-title-0-2)
+
+Yet the fighting seems to be away from this particular city. Usually we would expect demonstrations to occur near the parliament of the country, and given that Suu Kyi was arrested there, it would make sense for resistance forces to attempt to pressure the government by creating havoc near the official's buildings. However, there could be a reason for this, and this is highlighted from 2024 Q2.
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+par(mfrow = c(2,2))
+plot(kde_mm_24_Q2.CvL)
+plot(violence_24_st_kde, 2, override.par = FALSE, main = paste("2024 - Q", i))
+plot(explosions_24_st_kde, 2, override.par = FALSE, main = paste("2024 - Q", i))
+plot(battle_24_st_kde, 2, override.par = FALSE, main = paste("2024 - Q", i))
+```
+
+[![A map of Myanmar highlighting the military and militias presence, taken from The Economist](images/clipboard-3117419048.png)](https://www.economist.com/asia/2024/05/16/the-military-dictatorship-controls-less-than-50-of-myanmar)
+
+There is a clear correlation between the presence of the Militias, Myanmar's multiple civil resistance groups, and the presence of events, particularly violent events such as explosions, battles and violence against civilians. The presence of these events suggests violent fighting within these areas.
+
+Furthermore, the opposition has expanded and gained ground since late 2023 (The Economist, 2024). This would also suggest why we see the spread coverage despite the non-reduction in the number of events.
+
+### So what can we hope for Myanmar in the future?
+
+We do see an upward trend of fighting, and its unlikely that it will end anytime soon. However, we do see some silver lining.
+
+The increased spread in fighting, while bad, does signal that the military, Junta, is spread thin more than ever, and that the resistance does seem to be gaining ground. As Mr Dustin Barter, a senior research fellow at Global Affairs Think Tank ODI, told Channel News Asia (CNA), "In the past few months, there has been a lot of gains by the revolution and the resistance. There is optimism and hope that the military can be ousted." (Leong & Ng, 2024).
+
+## References
+
+Farge, E., & Mantovani, C. (2024, September 17). Myanmar Military stepping up civilian killings and arrests, says UN report. *Reuters*. <https://www.reuters.com/world/asia-pacific/myanmar-military-intensifies-civilian-killings-arrests-says-un-report-2024-09-17/>
+
+Maizland, L. (2022, January 31). Myanmar's Troubled History: Coups, Military Rule, and Ethnic Conflict. *Council on Foreign Relations.* <https://www.cfr.org/backgrounder/myanmar-history-coup-military-rule-ethnic-conflict-rohingya>
+
+Leong, W. K., & Ng, D. (2024, February 1). CNA Explains: What's happened since Myanmar's coup 3 years ago? *Channel News Asia.* <https://www.channelnewsasia.com/asia/myanmar-coup-3-years-anniversary-cna-explains-timeline-junta-4091861>
+
+Ratcliffe, R. (2024, April 17). Aung San Suu Kyi, Myanmar's jailed former leader, moved to house arrest, says junta. *The Guardian.* <https://www.theguardian.com/world/2024/apr/17/aung-san-suu-kyi-myanmar-jailed-former-leader-moved-to-house-arrest-says-junta>
+
+The Economist. (2024, May 16). *The military dictatorship controls less than 50% of Myanmar.* <https://www.economist.com/asia/2024/05/16/the-military-dictatorship-controls-less-than-50-of-myanmar>

@@ -4,6 +4,7 @@ listing:
   contents:
     - "Hands-on_Ex/Hands-on_Ex**/*.qmd"
     - "In-Class_Ex/In-Class_Ex**/*.qmd"
+    - "Take-Home_Ex/Take-Home_Ex**/*.qmd"
 ---
 
 ## About Me
