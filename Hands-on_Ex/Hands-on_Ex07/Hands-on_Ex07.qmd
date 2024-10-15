@@ -11,11 +11,13 @@ execute:
 
 ## Description
 
-Learning to compute Global and Local Measures of Spatial Autocorrelation in R.
+Learning to delineate homogeneous region by using geographically referenced multivariate data in R.
 
 ### Changelog
 
-11 Oct 24: Completed Hands-on Exercise 7.
+11 Oct 24: Completed Hands-on Exercise 7 up to 12.7.
+
+15 Oct 24: Completed Hands-on Exercise 7 from 12.8-12.10
 
 ## Importing Data and setting up R Environment
 
@@ -264,7 +266,7 @@ We can see that the standardisation has normalised the values more to fit a stan
 Now lets compute the proximity matrix using *dist(). dist()* supports six distance proximity calculations, they are: **euclidean, maximum, manhattan, canberra, binary and minkowski**. The default is *euclidean* proximity matrix.
 
 ```{r}
-proxmat = dist(shan_ict)
+proxmat = dist(shan_ict, method = 'euclidean')
 proxmat
 ```
 
@@ -371,3 +373,207 @@ qtm(shan_sf_cluster, "CLUSTER")
 ```
 
 The choropleth map above reveals the clusters are very fragmented. The is one of the major limitation when non-spatial clustering algorithm such as hierarchical cluster analysis method is used.
+
+## Spatially Constrained Clustering: SKATER approach
+
+This is how to use *skater()* to derive spatially constrained clusters.
+
+First, it needs to be converted into a **SpatialPolygonsDataFrame** object as SKATER only supports **sp** objects.
+
+```{r}
+shan_sp = as_Spatial(shan_sf)
+```
+
+Now, we can compute the neighbour list.
+
+```{r}
+shan.nb = poly2nb(shan_sp)
+summary(shan.nb)
+```
+
+Now we can plot this neighbour list.
+
+```{r}
+#| fig-width: 10
+coords = st_coordinates(st_centroid(st_geometry(shan_sf))) # Provide boundary data for shan.nb plotting
+plot(st_geometry(shan_sf), border = grey(.5)) #provides the base map
+plot(shan.nb, coords, col = "blue", add = TRUE) # setting add=TRUE plots this plot over the previous map plot
+```
+
+Now we can calculate the miminum spanning tree.
+
+We start by computing the cost of each edge using *nbcosts().* This is the distance between each node.
+
+```{r}
+lcosts = nbcosts(shan.nb, shan_ict)
+```
+
+Each observation gives the dissimilarity between its values and the values for the neighbouring observation. It is the notion of a generalised weight for a spatial weights matrix. Now we can incorporate these costs into a weights object. We use style "B" to ensure that cost values are not row-standardised.
+
+```{r}
+shan.w = nb2listw(shan.nb, lcosts, style = "B")
+summary(shan.w)
+```
+
+Now we can compute the minimum spanning tree (MST) using *mstree().*
+
+```{r}
+shan.mst = mstree(shan.w)
+class(shan.mst) # Check the class of shan.mst
+dim(shan.mst) #see the dimentions of the matrix
+```
+
+The tree has 54 rows, as it consists of the n-1 edges needed to traverse all 55 nodes.
+
+Now let us plot the MST to include the observation numbers
+
+```{r}
+#| fig-width: 10
+plot(st_geometry(shan_sf), border = grey(.5)) #provides the base map
+plot.mst(shan.mst, coords, col = "blue", add = TRUE, cex.labels = 0.7, cex.circles = 0) # setting add=TRUE plots this plot over the previous map plot
+```
+
+Now we can compute the spatially constrained clusters using *skater().*
+
+```{r}
+clust6 = skater(edges = shan.mst[,1:2], #give the first 2 columns of the matrix, ignore the cost (V3)
+                data = shan_ict,
+                method = "euclidean",
+                ncuts = 5) #Give the number of cuts. It is set 1 less than the number of clusters (how many times to cut, 1 cut = 2 pieces)
+str(clust6)
+```
+
+Now we can see which nodes and edges are clustered together, followed by a summary. The sum of squares measures are given as ssto for the total, and ssw to show the effect of each cuts on the overall criterion. We can print the groups to see which node has been assigned to which cluster, and how many nodes are in each cluster.
+
+```{r}
+clust6$groups
+table(clust6$groups)
+```
+
+Now lets plot it out
+
+```{r}
+#| fig-width: 10
+plot(st_geometry(shan_sf), border = grey(.5)) #provides the base map
+plot(clust6, coords, add = TRUE, cex.labels = 0.7, cex.circles = 0, 
+     groups.colors = c("red","green","blue", "brown", "pink", "yellow")) 
+```
+
+Now let's plot it into a choropleth map to see the clusters even clearer. We can plot the hierarchical clustering map for comparison.
+
+```{r}
+groups_mat = as.matrix(clust6$groups)
+shan_sf_spatialcluster = cbind(shan_sf_cluster, as.factor(groups_mat)) %>%
+  rename(`SP_CLUSTER`=`as.factor.groups_mat.`)
+
+shclust.map = qtm(shan_sf_spatialcluster, "SP_CLUSTER")
+hclust.map = qtm(shan_sf_cluster, "CLUSTER")
+
+tmap_arrange(hclust.map, shclust.map, ncol = 2)
+```
+
+## Spatially Constrained Clustering: ClustGeo Method
+
+[**ClustGeo**](https://cran.r-project.org/web/packages/ClustGeo/) package is an R package specially designed to support the need of performing spatially constrained cluster analysis. More specifically, it provides a Ward-like hierarchical clustering algorithm called `hclustgeo()` including spatial/geographical constraints.
+
+In the nutshell, the algorithm uses two dissimilarity matrices D0 and D1 along with a mixing parameter alpha, whereby the value of alpha must be a real number between \[0, 1\]. D0 can be non-Euclidean and the weights of the observations can be non-uniform. It gives the dissimilarities in the **attribute/clustering variable space**. D1, on the other hand, gives the dissimilarities in the **constraint space**. The criterion minimised at each stage is a convex combination of the homogeneity criterion calculated with D0 and the homogeneity criterion calculated with D1.
+
+The idea is then to determine a value of alpha which increases the spatial contiguity without deteriorating too much the quality of the solution based on the variables of interest. This need is supported by a function called `choicealpha()`.
+
+Now using *hclustgeo()*, we can perform a typical Ward-like hierarchical clustering, similar to *hclust().* We only need to provide a dissimilarity matrix.
+
+```{r}
+#| fig-width: 10
+nongeo_cluster = hclustgeo(proxmat)
+plot(nongeo_cluster, cex = 0.5)
+rect.hclust(nongeo_cluster, k = 6, border = 2:5)
+```
+
+Now let's map the clusters formed.
+
+```{r}
+groups = as.factor(cutree(nongeo_cluster, k = 6))
+shan_sf_ngeo_cluster = cbind(shan_sf, as.matrix(groups)) %>%
+  rename(`NG_CLUSTER` = `as.matrix.groups.`)
+
+ngclust.map = qtm(shan_sf_ngeo_cluster, "NG_CLUSTER")
+
+tmap_arrange(hclust.map, ngclust.map, ncol = 2)
+```
+
+We can see there are some differences. This is because we are not doing a spatially constrained hierarchical clustering. To do it, we will need a spatial distance matrix.
+
+```{r}
+distmat = as.dist(st_distance(shan_sf, shan_sf))
+```
+
+Now we can use *choicealpha()* to determine a suitable value for the mixing parameter alpha.
+
+```{r}
+cr = choicealpha(proxmat, distmat, range.alpha = seq(0, 1, 0.1), K = 6, graph = TRUE)
+```
+
+Based on the graphs, we can use 0.2 as the alpha value.
+
+```{r}
+clustG = hclustgeo(proxmat, distmat, alpha = 0.2)
+groups = as.factor(cutree(clustG, k = 6))
+
+shan_sf_Gcluster = cbind(shan_sf, as.matrix(groups)) %>% 
+  rename(`G_CLUSTER` = `as.matrix.groups.`)
+
+gclust.map = qtm(shan_sf_Gcluster, "G_CLUSTER")
+
+tmap_arrange(hclust.map, gclust.map, ncol = 2)
+```
+
+## Visual Interpretation of Clusters
+
+We can use boxplot to visualise a single clustering variable.
+
+```{r}
+ggplot(data = shan_sf_ngeo_cluster, aes(x = NG_CLUSTER, y = RADIO_PR)) + geom_boxplot()
+```
+
+The boxplot reveals Cluster 3 displays the highest mean Radio Ownership Per Thousand Household. This is followed by Cluster 2, 1, 4, 6 and 5.
+
+We can also do **multivariate visualisation**.
+
+```{r}
+#| fig-width: 10
+ggparcoord(data = shan_sf_ngeo_cluster,
+           columns = c(110:114),
+           scale = "globalminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE,
+           title = "Multiple Parallel Coordinates Plots of ICT Variables by Cluster") +
+  facet_grid(~ NG_CLUSTER) +
+  theme(axis.text.x = element_text(angle = 50))
+```
+
+Note that the `scale` argument of `ggparcoor()` provide several methods to scale the clustering variables. They are:
+
+-   std: univariately, subtract mean and divide by standard deviation.
+
+-   robust: univariately, subtract median and divide by median absolute deviation.
+
+-   uniminmax: univariately, scale so the minimum of the variable is zero, and the maximum is one.
+
+-   globalminmax: no scaling is done; the range of the graphs is defined by the global minimum and the global maximum.
+
+-   center: use uniminmax to standardize vertical height, then center each variable at a value specified by the scaleSummary param.
+
+-   centerObs: use uniminmax to standardize vertical height, then center each variable at the value of the observation specified by the centerObsID param
+
+We can also generate the mean of the different clustering variables.
+
+```{r}
+shan_sf_ngeo_cluster %>% 
+  st_set_geometry(NULL) %>%
+  group_by(NG_CLUSTER) %>% 
+  summarise(mean_RADIO_PR = mean(RADIO_PR),
+            mean_TV_PR = mean(TV_PR),
+            mean_LLPHONE_PR = mean(LLPHONE_PR),
+            mean_MPHONE_PR = mean(MPHONE_PR),
+            mean_COMPUTER_PR = mean(COMPUTER_PR))
+```
