@@ -1,0 +1,13 @@
+name: GAShiny
+title: GAShiny
+username: is415-dexterw
+account: is415-dexterw
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12867913
+bundleId: 9161239
+url: https://is415-dexterw.shinyapps.io/GAShiny/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app3.R
