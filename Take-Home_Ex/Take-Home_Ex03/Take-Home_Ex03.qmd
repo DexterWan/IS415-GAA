@@ -1,0 +1,242 @@
+---
+title: "Take-Home Exercise 3"
+author: "Dexter Wan"
+date: "October 21, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+## Background
+
+When President Rodrigo Duterte took office in Philippines in 2016, a national “war on drugs” was declared and carried out. It has lead to the death of over 12,000 Filipinos to date, with at least 2,500 of the deaths attributed to the Philippine National Police. The Human Rights Watch(HRW) research found evidence of police falsifying evidence to get convictions, leading to unjust killings. (HRW, n.d.)
+
+Now that a new President Ferdinand Marcos Jr. has taken office in 2022, he promised to end the killings and focus on rehabilitation. However, killings still seem to be ongoing till the current day (Yan, 2024). In our project, we have 2 main objectives:
+
+1.  We want to find out how the “War on Drugs” was occurring in Philippines, to see if there are any patterns over where most cases took place. We plan to use **Spatial Point Patterns Analysis** to identify any clustering of cases.
+
+2.  We want to see if the killings have truly been reduced under President Ferdinand Marcos Jr. We plan to use **Spatio-Temporal Point Patterns Analysis** to see the pattern of cases from 2016 to 2024.
+
+I will be focusing on the Spatio-Temporal Point Pattern Analysis.
+
+## **Our Data**
+
+This is the data we plan to use. Do note that this may be added on to during our further research.
+
+-   Philippines data from [Armed Conflict Location & Event Data Project (ACLED)](https://acleddata.com/). The killings are logged as “Political Violence” and is recorded by ACLED (ACLED, 2024)
+
+-   [Philippines boundary data](https://data.humdata.org/dataset/cod-ab-phl) from HDX.
+
+## Importing Packages and Data
+
+Before we start, we need to import the data and ensure we modify it as needed. Firstly, we start of by loading in the relevant packages that will be needed.
+
+```{r}
+pacman::p_load(sf, raster, spatstat, sparr, tidyverse, tmap, animation, ggpubr)
+```
+
+Now, we can load in our data. Let's start with the data from ACLED.
+
+```{r}
+drug_cases_sf = read.csv("data/raw/2016-01-01-2024-06-30-Philippines.csv") %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
+  st_transform(crs = 32651) %>%
+  mutate(event_date = dmy(event_date)) %>%
+  mutate(event_month = year*100 + month(event_date)) %>%
+  mutate(event_quarter = year*10 + quarter(event_date)) 
+```
+
+Now let's import the Philippine boundary data.
+
+```{r}
+ph_sf = st_read(dsn = "data/raw/geospatial", 
+                layer = "phl_admbnda_adm2_psa_namria_20231106")
+```
+
+```{r}
+st_crs(ph_sf)
+```
+
+```{r}
+ph_sf = st_transform(ph_sf, crs = 32651)
+st_crs(ph_sf)
+```
+
+```{r}
+tmap_mode("plot")
+tm_shape(ph_sf) + 
+  tm_polygons() +
+tm_shape(drug_cases_sf) +
+  tm_dots()
+```
+
+```{r}
+ph_owin = as.owin(ph_sf)
+```
+
+```{r}
+hist(drug_cases_sf$"event_quarter")
+```
+
+## Computing STKDE by Quarter
+
+```{r}
+drug_cases_quarter = drug_cases_sf %>% select(event_quarter)
+drug_cases_quarter_ppp = as.ppp(drug_cases_quarter)
+any(duplicated(drug_cases_quarter_ppp))
+```
+
+```{r}
+drug_cases_quarter_ppp_jit <- rjitter(drug_cases_quarter_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+any(duplicated(drug_cases_quarter_ppp_jit))
+```
+
+```{r}
+drug_cases_quarter_owin = drug_cases_quarter_ppp_jit[ph_owin]
+summary(drug_cases_quarter_owin)
+```
+
+```{r}
+plot(drug_cases_quarter_owin)
+```
+
+```{r}
+st_kde = spattemp.density(drug_cases_quarter_owin)
+summary(st_kde)
+```
+
+```{r}
+#plot using 2 for loops, then pump into a variable to hold it, then use animation? Just plot(st_kde) will plot 20165, which doesnt exist
+yrs = c(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024)
+quarts = c(1, 2, 3, 4)
+
+animation::saveGIF(
+  for(y in yrs){
+    if(y == 2024){
+      quarts = c(1,2)
+    }
+    for(q in quarts){
+      plot(st_kde, y*10+q,
+           main = paste("Drug Cases on ", y, "Q", q))
+    }
+  },
+  movie.name = "drug_stkde_quarters.gif", interval = 0.1, ani.width = 600
+)
+```
+
+![***Drug cases by quarterly***](drug_stkde_quarters.gif)
+
+## Computing STKDE by Month
+
+```{r}
+drug_cases_month = drug_cases_sf %>% select(event_month)
+drug_cases_month_ppp = as.ppp(drug_cases_month)
+any(duplicated(drug_cases_month_ppp))
+```
+
+```{r}
+drug_cases_month_ppp_jit <- rjitter(drug_cases_month_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+any(duplicated(drug_cases_month_ppp_jit))
+```
+
+```{r}
+drug_cases_month_owin = drug_cases_month_ppp_jit[ph_owin]
+summary(drug_cases_month_owin)
+```
+
+```{r}
+st_kde_month = spattemp.density(drug_cases_month_owin)
+summary(st_kde_month)
+```
+
+```{r}
+yrs = c(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024)
+mths = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ,12)
+
+animation::saveGIF(
+  for(y in yrs){
+    if(y == 2024){
+      mths = c(1, 2, 3, 4, 5, 6)
+    }
+    for(m in mths){
+      plot(st_kde_month, y*100+m,
+           main = paste("Drug Cases on ", y, ", ", m,"month"))
+    }
+  },
+  movie.name = "drug_stkde_month.gif", interval = 0.1, ani.width = 600
+)
+```
+
+![***Drug cases by monthly***](drug_stkde_month.gif)
+
+## Observations
+
+1.  Killings do seem to reduce, but a bit hard to tell
+
+2.  We do see the cases moving south.
+
+### Current Thoughts
+
+1.  Should make fix.range an option to show if using the fixed range if there is a decrease?
+
+2.  Should show animation, but allow them to also show base graph
+
+3.  Potentially also make use of scatterplots or histograms to showcase a decrease in overall numbers
+
+4.  Allow users to choose between months and quarter.
+
+## GWR
+
+1.  Mutate drug_cases_sf to
+
+    1.  Filter only 2018-2022
+
+    2.  Group by adm2, then year
+
+    3.  Sum number of cases per province per year
+
+2.  Join with GDP
+
+3.  Perform Single Linear Regression.
+
+```{r}
+drug_cases_GDP_sf = drug_cases_sf %>%
+  select(admin2, year) %>%
+  filter(year > 2017, year < 2023) %>%
+  group_by(admin2, year) %>%
+  count(admin2, year)
+```
+
+```{r}
+ph_gdp = read.csv("data/raw/PH_GDP_2018-2022.csv", check.names = FALSE) %>%
+  pivot_longer(cols = 2:6, names_to = "year", names_transform = list(year = as.integer), values_drop_na = TRUE)
+
+ph_gdp$Geolocation = str_remove(ph_gdp$Geolocation, fixed(".."))
+```
+
+```{r}
+drug_cases_GDP_sf = left_join(drug_cases_GDP_sf, ph_gdp, by = join_by(admin2 == Geolocation, year == year))
+```
+
+```{r}
+drug_cases.slr = lm(formula = n ~ value, data = drug_cases_GDP_sf)
+```
+
+```{r}
+summary(drug_cases.slr)
+```
+
+```{r}
+ggplot(data = drug_cases.slr,
+       aes(x = `value`, y = `n`)) +
+  geom_point() + 
+  geom_smooth(method = lm)
+```
