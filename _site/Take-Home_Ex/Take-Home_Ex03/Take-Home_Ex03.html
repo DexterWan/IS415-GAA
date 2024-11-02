@@ -192,6 +192,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex09/In-Class_Ex09.html">
  <span class="dropdown-text">In-Class Exercise 9</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex10/In-Class_Ex10.html">
+ <span class="dropdown-text">In-Class Exercise 10</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -231,14 +235,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a></li>
   <li><a href="#our-data" id="toc-our-data" class="nav-link" data-scroll-target="#our-data"><strong>Our Data</strong></a></li>
-  <li><a href="#importing-packages-and-data" id="toc-importing-packages-and-data" class="nav-link" data-scroll-target="#importing-packages-and-data">Importing Packages and Data</a></li>
-  <li><a href="#computing-stkde-by-quarter" id="toc-computing-stkde-by-quarter" class="nav-link" data-scroll-target="#computing-stkde-by-quarter">Computing STKDE by Quarter</a></li>
-  <li><a href="#computing-stkde-by-month" id="toc-computing-stkde-by-month" class="nav-link" data-scroll-target="#computing-stkde-by-month">Computing STKDE by Month</a></li>
-  <li><a href="#observations" id="toc-observations" class="nav-link" data-scroll-target="#observations">Observations</a>
+  <li><a href="#importing-packages-and-data" id="toc-importing-packages-and-data" class="nav-link" data-scroll-target="#importing-packages-and-data">Importing Packages and Data</a>
   <ul class="collapse">
-  <li><a href="#current-thoughts" id="toc-current-thoughts" class="nav-link" data-scroll-target="#current-thoughts">Current Thoughts</a></li>
+  <li><a href="#to-allow-altercation" id="toc-to-allow-altercation" class="nav-link" data-scroll-target="#to-allow-altercation">To allow altercation:</a></li>
   </ul></li>
-  <li><a href="#gwr" id="toc-gwr" class="nav-link" data-scroll-target="#gwr">GWR</a></li>
+  <li><a href="#computing-stkde" id="toc-computing-stkde" class="nav-link" data-scroll-target="#computing-stkde">Computing STKDE</a>
+  <ul class="collapse">
+  <li><a href="#by-quarter" id="toc-by-quarter" class="nav-link" data-scroll-target="#by-quarter">By Quarter</a></li>
+  <li><a href="#by-month" id="toc-by-month" class="nav-link" data-scroll-target="#by-month">By Month</a></li>
+  </ul></li>
+  <li><a href="#stkde-observations" id="toc-stkde-observations" class="nav-link" data-scroll-target="#stkde-observations">STKDE Observations</a>
+  <ul class="collapse">
+  <li><a href="#to-allow-altercation-in-shinyapp" id="toc-to-allow-altercation-in-shinyapp" class="nav-link" data-scroll-target="#to-allow-altercation-in-shinyapp">To allow altercation in ShinyApp</a></li>
+  </ul></li>
+  <li><a href="#gwr" id="toc-gwr" class="nav-link" data-scroll-target="#gwr">GWR</a>
+  <ul class="collapse">
+  <li><a href="#data-prep" id="toc-data-prep" class="nav-link" data-scroll-target="#data-prep">Data Prep</a></li>
+  <li><a href="#basic-linear-regression-model" id="toc-basic-linear-regression-model" class="nav-link" data-scroll-target="#basic-linear-regression-model">Basic Linear Regression Model</a></li>
+  </ul></li>
+  <li><a href="#gwr-observation" id="toc-gwr-observation" class="nav-link" data-scroll-target="#gwr-observation">GWR Observation</a>
+  <ul class="collapse">
+  <li><a href="#to-allow-altercation-1" id="toc-to-allow-altercation-1" class="nav-link" data-scroll-target="#to-allow-altercation-1">To allow altercation:</a></li>
+  </ul></li>
+  <li><a href="#proposed-shinyapp-storyboard" id="toc-proposed-shinyapp-storyboard" class="nav-link" data-scroll-target="#proposed-shinyapp-storyboard">Proposed ShinyApp Storyboard</a>
+  <ul class="collapse">
+  <li><a href="#eda" id="toc-eda" class="nav-link" data-scroll-target="#eda">EDA</a></li>
+  <li><a href="#spatio-temporal" id="toc-spatio-temporal" class="nav-link" data-scroll-target="#spatio-temporal">Spatio-Temporal</a></li>
+  <li><a href="#linear-regression" id="toc-linear-regression" class="nav-link" data-scroll-target="#linear-regression">Linear Regression</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -271,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 27, 2024</p>
+      <p class="date-modified">November 3, 2024</p>
     </div>
   </div>
     
@@ -285,19 +309,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="background" class="level2">
 <h2 class="anchored" data-anchor-id="background">Background</h2>
 <p>When President Rodrigo Duterte took office in Philippines in 2016, a national “war on drugs” was declared and carried out. It has lead to the death of over 12,000 Filipinos to date, with at least 2,500 of the deaths attributed to the Philippine National Police. The Human Rights Watch(HRW) research found evidence of police falsifying evidence to get convictions, leading to unjust killings. (HRW, n.d.)</p>
-<p>Now that a new President Ferdinand Marcos Jr.&nbsp;has taken office in 2022, he promised to end the killings and focus on rehabilitation. However, killings still seem to be ongoing till the current day (Yan, 2024). In our project, we have 2 main objectives:</p>
+<p>Now that a new President Ferdinand Marcos Jr.&nbsp;has taken office in 2022, he promised to end the killings and focus on rehabilitation. However, killings still seem to be ongoing till the current day (Yan, 2024). In my assignment, I will focus on 2 main objectives:</p>
 <ol type="1">
-<li><p>We want to find out how the “War on Drugs” was occurring in Philippines, to see if there are any patterns over where most cases took place. We plan to use <strong>Spatial Point Patterns Analysis</strong> to identify any clustering of cases.</p></li>
 <li><p>We want to see if the killings have truly been reduced under President Ferdinand Marcos Jr.&nbsp;We plan to use <strong>Spatio-Temporal Point Patterns Analysis</strong> to see the pattern of cases from 2016 to 2024.</p></li>
+<li><p>Is there a correlation between a province’s GDP Per Capita and the occurance of incidents? We plan to use a <strong>Simple Linear Regression Model</strong> to identify any correlation.</p></li>
 </ol>
-<p>I will be focusing on the Spatio-Temporal Point Pattern Analysis.</p>
 </section>
 <section id="our-data" class="level2">
 <h2 class="anchored" data-anchor-id="our-data"><strong>Our Data</strong></h2>
-<p>This is the data we plan to use. Do note that this may be added on to during our further research.</p>
+<p>This is the data we plan to use.</p>
 <ul>
 <li><p>Philippines data from <a href="https://acleddata.com/">Armed Conflict Location &amp; Event Data Project (ACLED)</a>. The killings are logged as “Political Violence” and is recorded by ACLED (ACLED, 2024)</p></li>
 <li><p><a href="https://data.humdata.org/dataset/cod-ab-phl">Philippines boundary data</a> from HDX.</p></li>
+<li><p>Population and GDPPC data from the <a href="https://psa.gov.ph/">Philippine Statistics Authority</a>.</p></li>
 </ul>
 </section>
 <section id="importing-packages-and-data" class="level2">
@@ -315,6 +339,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">event_month =</span> year<span class="sc">*</span><span class="dv">100</span> <span class="sc">+</span> <span class="fu">month</span>(event_date)) <span class="sc">%&gt;%</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">event_quarter =</span> year<span class="sc">*</span><span class="dv">10</span> <span class="sc">+</span> <span class="fu">quarter</span>(event_date)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>I have converted the aspatial data into an <strong>sf</strong> object and transformed it to the correct crs for Philippine. I have also mutated custom columns containing the month and quarters of each event. I have added the year directly in front of the month and quarter for future usage in the Spatio-Temporal Point Pattern analysis. (E.g. An event occuring in December of 2024 will be “202412” in <strong>event_month</strong>, and “20244” in <strong>event_quarter</strong>.)</p>
 <p>Now let’s import the Philippine boundary data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ph_sf <span class="ot">=</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"data/raw/geospatial"</span>, </span>
@@ -352,6 +377,7 @@ GEOGCRS["WGS 84",
     ID["EPSG",4326]]</code></pre>
 </div>
 </div>
+<p>The boundary data is projected to the standard WGS 84 coordinates. Let us transform it into a suitable crs for Philippine.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ph_sf <span class="ot">=</span> <span class="fu">st_transform</span>(ph_sf, <span class="at">crs =</span> <span class="dv">32651</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(ph_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -407,63 +433,73 @@ PROJCRS["WGS 84 / UTM zone 51N",
     ID["EPSG",32651]]</code></pre>
 </div>
 </div>
+<p>I shall convert this into an owin object for future use.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>tmap mode set to plotting</code></pre>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ph_owin <span class="ot">=</span> <span class="fu">as.owin</span>(ph_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(ph_sf) <span class="sc">+</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>() <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(drug_cases_sf) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now I shall save our data into rds files for future use.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(ph_owin, <span class="st">"data/rds/ph_owin.rds"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(ph_sf, <span class="st">"data/rds/ph_sf.rds"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(drug_cases_sf, <span class="st">"data/rds/drug_cases_sf.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ph_owin <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/ph_owin.rds"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ph_sf <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/ph_sf.rds"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>drug_cases_sf <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/drug_cases_sf.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> drug_cases_sf,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">event_date</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"black"</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill =</span> <span class="st">"light blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ph_owin <span class="ot">=</span> <span class="fu">as.owin</span>(ph_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(drug_cases_sf<span class="sc">$</span><span class="st">"event_quarter"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
+<section id="to-allow-altercation" class="level3">
+<h3 class="anchored" data-anchor-id="to-allow-altercation">To allow altercation:</h3>
+<ol type="1">
+<li>Type of events (“Violence against Civilians”, “Battles”, “Strategic developments”)</li>
+</ol>
 </section>
-<section id="computing-stkde-by-quarter" class="level2">
-<h2 class="anchored" data-anchor-id="computing-stkde-by-quarter">Computing STKDE by Quarter</h2>
+</section>
+<section id="computing-stkde" class="level2">
+<h2 class="anchored" data-anchor-id="computing-stkde">Computing STKDE</h2>
+<section id="by-quarter" class="level3">
+<h3 class="anchored" data-anchor-id="by-quarter">By Quarter</h3>
+<p>First I will start by grabbing the event_quarter into a ppp object and checking for any duplicates.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>drug_cases_quarter <span class="ot">=</span> drug_cases_sf <span class="sc">%&gt;%</span> <span class="fu">select</span>(event_quarter)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>drug_cases_quarter_ppp <span class="ot">=</span> <span class="fu">as.ppp</span>(drug_cases_quarter)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(drug_cases_quarter_ppp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>drug_cases_quarter <span class="ot">=</span> drug_cases_sf <span class="sc">%&gt;%</span> <span class="fu">select</span>(event_quarter)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>drug_cases_quarter_ppp <span class="ot">=</span> <span class="fu">as.ppp</span>(drug_cases_quarter)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(drug_cases_quarter_ppp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] TRUE</code></pre>
 </div>
 </div>
+<p>As we do find some duplicates, I will perform jittering to move the duplicates.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>drug_cases_quarter_ppp_jit <span class="ot">&lt;-</span> <span class="fu">rjitter</span>(drug_cases_quarter_ppp, </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">retry=</span><span class="cn">TRUE</span>, </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">nsim=</span><span class="dv">1</span>, </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">drop=</span><span class="cn">TRUE</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(drug_cases_quarter_ppp_jit))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>drug_cases_quarter_ppp_jit <span class="ot">&lt;-</span> <span class="fu">rjitter</span>(drug_cases_quarter_ppp, </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">retry=</span><span class="cn">TRUE</span>, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">nsim=</span><span class="dv">1</span>, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">drop=</span><span class="cn">TRUE</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(drug_cases_quarter_ppp_jit))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE</code></pre>
 </div>
 </div>
+<p>Now I shall attach the owin object.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>drug_cases_quarter_owin <span class="ot">=</span> drug_cases_quarter_ppp_jit[ph_owin]</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_quarter_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>drug_cases_quarter_owin <span class="ot">=</span> drug_cases_quarter_ppp_jit[ph_owin]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_quarter_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Marked planar point pattern:  6714 points
-Average intensity 2.280804e-08 points per square unit
+<pre><code>Marked planar point pattern:  6709 points
+Average intensity 2.279106e-08 points per square unit
 
 Coordinates are given to 11 decimal places
 
@@ -4141,32 +4177,33 @@ Fraction of frame area: 0.119</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(drug_cases_quarter_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(drug_cases_quarter_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>Finally, we can compute the Spatio-Temporal Kernel Density Estimate.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>st_kde <span class="ot">=</span> <span class="fu">spattemp.density</span>(drug_cases_quarter_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>st_kde <span class="ot">=</span> <span class="fu">spattemp.density</span>(drug_cases_quarter_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Calculating trivariate smooth...Done.
 Edge-correcting...Done.
 Conditioning on time...Done.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(st_kde)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(st_kde)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Spatiotemporal Kernel Density Estimate
 
 Bandwidths
-  h = 43772.75 (spatial)
-  lambda = 0.2009 (temporal)
+  h = 45256.78 (spatial)
+  lambda = 0.2002 (temporal)
 
 No. of observations
-  6714 
+  6709 
 
 Spatial bound
   Type: polygonal
@@ -4177,32 +4214,27 @@ Temporal bound
 
 Evaluation
   128 x 128 x 82 trivariate lattice
-  Density range: [1.051854e-110, 2.352576e-11]</code></pre>
+  Density range: [4.7194e-108, 2.238288e-11]</code></pre>
 </div>
 </div>
+<p>Now I shall plot it into an animation. I will go through each quarter for every year and plot them out into an animation. 2024 will have an extra if-condition to only plot out Q1 and Q2 as we are only taking data till June 2024.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#plot using 2 for loops, then pump into a variable to hold it, then use animation? Just plot(st_kde) will plot 20165, which doesnt exist</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>yrs <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2016</span>, <span class="dv">2017</span>, <span class="dv">2018</span>, <span class="dv">2019</span>, <span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>quarts <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>animation<span class="sc">::</span><span class="fu">saveGIF</span>(</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(y <span class="cf">in</span> yrs){</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(y <span class="sc">==</span> <span class="dv">2024</span>){</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>      quarts <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(q <span class="cf">in</span> quarts){</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plot</span>(st_kde, y<span class="sc">*</span><span class="dv">10</span><span class="sc">+</span>q,</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Drug Cases on "</span>, y, <span class="st">"Q"</span>, q))</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">movie.name =</span> <span class="st">"drug_stkde_quarters.gif"</span>, <span class="at">interval =</span> <span class="fl">0.1</span>, <span class="at">ani.width =</span> <span class="dv">600</span></span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Output at: drug_stkde_quarters.gif</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] TRUE</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#plot using 2 for loops, then pump into a variable to hold it, then use animation? Just plot(st_kde) will plot 20165, which doesnt exist</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>yrs <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2016</span>, <span class="dv">2017</span>, <span class="dv">2018</span>, <span class="dv">2019</span>, <span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>quarts <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>animation<span class="sc">::</span><span class="fu">saveGIF</span>(</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(y <span class="cf">in</span> yrs){</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(y <span class="sc">==</span> <span class="dv">2024</span>){</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>      quarts <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(q <span class="cf">in</span> quarts){</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plot</span>(st_kde, y<span class="sc">*</span><span class="dv">10</span><span class="sc">+</span>q,</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Drug Cases on "</span>, y, <span class="st">"Q"</span>, q))</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">movie.name =</span> <span class="st">"drug_stkde_quarters.gif"</span>, <span class="at">interval =</span> <span class="fl">0.1</span>, <span class="at">ani.width =</span> <span class="dv">600</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -4211,39 +4243,40 @@ Evaluation
 </figure>
 </div>
 </section>
-<section id="computing-stkde-by-month" class="level2">
-<h2 class="anchored" data-anchor-id="computing-stkde-by-month">Computing STKDE by Month</h2>
+<section id="by-month" class="level3">
+<h3 class="anchored" data-anchor-id="by-month">By Month</h3>
+<p>Now I shall repeat the steps, but using event_month instead.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>drug_cases_month <span class="ot">=</span> drug_cases_sf <span class="sc">%&gt;%</span> <span class="fu">select</span>(event_month)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>drug_cases_month_ppp <span class="ot">=</span> <span class="fu">as.ppp</span>(drug_cases_month)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(drug_cases_month_ppp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>drug_cases_month <span class="ot">=</span> drug_cases_sf <span class="sc">%&gt;%</span> <span class="fu">select</span>(event_month)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>drug_cases_month_ppp <span class="ot">=</span> <span class="fu">as.ppp</span>(drug_cases_month)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(drug_cases_month_ppp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] TRUE</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>drug_cases_month_ppp_jit <span class="ot">&lt;-</span> <span class="fu">rjitter</span>(drug_cases_month_ppp, </span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">retry=</span><span class="cn">TRUE</span>, </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">nsim=</span><span class="dv">1</span>, </span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">drop=</span><span class="cn">TRUE</span>)</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(drug_cases_month_ppp_jit))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>drug_cases_month_ppp_jit <span class="ot">&lt;-</span> <span class="fu">rjitter</span>(drug_cases_month_ppp, </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">retry=</span><span class="cn">TRUE</span>, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">nsim=</span><span class="dv">1</span>, </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">drop=</span><span class="cn">TRUE</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(drug_cases_month_ppp_jit))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>drug_cases_month_owin <span class="ot">=</span> drug_cases_month_ppp_jit[ph_owin]</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_month_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>drug_cases_month_owin <span class="ot">=</span> drug_cases_month_ppp_jit[ph_owin]</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_month_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Marked planar point pattern:  6695 points
-Average intensity 2.27435e-08 points per square unit
+<pre><code>Marked planar point pattern:  6712 points
+Average intensity 2.280125e-08 points per square unit
 
 Coordinates are given to 11 decimal places
 
 marks are numeric, of type 'double'
 Summary:
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
- 201601  201610  201708  201795  201908  202406 
+ 201601  201610  201708  201796  201908  202406 
 
 Window: polygonal boundary
 3659 separate polygons (3 holes)
@@ -7914,22 +7947,22 @@ Fraction of frame area: 0.119</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>st_kde_month <span class="ot">=</span> <span class="fu">spattemp.density</span>(drug_cases_month_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>st_kde_month <span class="ot">=</span> <span class="fu">spattemp.density</span>(drug_cases_month_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Calculating trivariate smooth...Done.
 Edge-correcting...Done.
 Conditioning on time...Done.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(st_kde_month)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(st_kde_month)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Spatiotemporal Kernel Density Estimate
 
 Bandwidths
-  h = 45044.74 (spatial)
-  lambda = 1.056 (temporal)
+  h = 45073.71 (spatial)
+  lambda = 1.0568 (temporal)
 
 No. of observations
-  6695 
+  6712 
 
 Spatial bound
   Type: polygonal
@@ -7940,31 +7973,25 @@ Temporal bound
 
 Evaluation
   128 x 128 x 806 trivariate lattice
-  Density range: [0, 3.434753e-12]</code></pre>
+  Density range: [0, 3.404998e-12]</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>yrs <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2016</span>, <span class="dv">2017</span>, <span class="dv">2018</span>, <span class="dv">2019</span>, <span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>)</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>mths <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span> ,<span class="dv">12</span>)</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>animation<span class="sc">::</span><span class="fu">saveGIF</span>(</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(y <span class="cf">in</span> yrs){</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(y <span class="sc">==</span> <span class="dv">2024</span>){</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>      mths <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>)</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(m <span class="cf">in</span> mths){</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plot</span>(st_kde_month, y<span class="sc">*</span><span class="dv">100</span><span class="sc">+</span>m,</span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Drug Cases on "</span>, y, <span class="st">", "</span>, m,<span class="st">"month"</span>))</span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">movie.name =</span> <span class="st">"drug_stkde_month.gif"</span>, <span class="at">interval =</span> <span class="fl">0.1</span>, <span class="at">ani.width =</span> <span class="dv">600</span></span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Output at: drug_stkde_month.gif</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] TRUE</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>yrs <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">2016</span>, <span class="dv">2017</span>, <span class="dv">2018</span>, <span class="dv">2019</span>, <span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>mths <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span> ,<span class="dv">12</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>animation<span class="sc">::</span><span class="fu">saveGIF</span>(</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(y <span class="cf">in</span> yrs){</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(y <span class="sc">==</span> <span class="dv">2024</span>){</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>      mths <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(m <span class="cf">in</span> mths){</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plot</span>(st_kde_month, y<span class="sc">*</span><span class="dv">100</span><span class="sc">+</span>m,</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Drug Cases on "</span>, y, <span class="st">", "</span>, m,<span class="st">"month"</span>))</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">movie.name =</span> <span class="st">"drug_stkde_month.gif"</span>, <span class="at">interval =</span> <span class="fl">0.1</span>, <span class="at">ani.width =</span> <span class="dv">600</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -7973,80 +8000,121 @@ Evaluation
 </figure>
 </div>
 </section>
-<section id="observations" class="level2">
-<h2 class="anchored" data-anchor-id="observations">Observations</h2>
+</section>
+<section id="stkde-observations" class="level2">
+<h2 class="anchored" data-anchor-id="stkde-observations">STKDE Observations</h2>
 <ol type="1">
 <li><p>Killings do seem to reduce, but a bit hard to tell</p></li>
 <li><p>We do see the cases moving south.</p></li>
 </ol>
-<section id="current-thoughts" class="level3">
-<h3 class="anchored" data-anchor-id="current-thoughts">Current Thoughts</h3>
+<section id="to-allow-altercation-in-shinyapp" class="level3">
+<h3 class="anchored" data-anchor-id="to-allow-altercation-in-shinyapp">To allow altercation in ShinyApp</h3>
 <ol type="1">
-<li><p>Should make fix.range an option to show if using the fixed range if there is a decrease?</p></li>
-<li><p>Should show animation, but allow them to also show base graph</p></li>
-<li><p>Potentially also make use of scatterplots or histograms to showcase a decrease in overall numbers</p></li>
-<li><p>Allow users to choose between months and quarter.</p></li>
+<li><p>Allow a T/F for fix.range to show using the fixed range if there is a decrease</p></li>
+<li><p>We should show animation as landing page, but allow them to toggle between static graphs and animations.</p>
+<ol type="1">
+<li><p>Allow choosing of monthly or quarterly</p></li>
+<li><p>For static graphs, allow choosing of time-period.</p></li>
+</ol></li>
 </ol>
 </section>
 </section>
 <section id="gwr" class="level2">
 <h2 class="anchored" data-anchor-id="gwr">GWR</h2>
-<ol type="1">
-<li><p>Mutate drug_cases_sf to</p>
-<ol type="1">
-<li><p>Filter only 2018-2022</p></li>
-<li><p>Group by adm2, then year</p></li>
-<li><p>Sum number of cases per province per year</p></li>
-</ol></li>
-<li><p>Join with GDP</p></li>
-<li><p>Perform Single Linear Regression.</p></li>
-</ol>
+<section id="data-prep" class="level3">
+<h3 class="anchored" data-anchor-id="data-prep">Data Prep</h3>
+<p>Now lets prepare the data for the Simple Linear Regression Model. I will filter only 2018-2022 data as that was all the data we could get the GDP Per Capita (GDPPC) for provinces. I then group them and count the number of incidents per year and per province.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>drug_cases_GDP_sf <span class="ot">=</span> drug_cases_sf <span class="sc">%&gt;%</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(admin2, year) <span class="sc">%&gt;%</span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">2017</span>, year <span class="sc">&lt;</span> <span class="dv">2023</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(admin2, year) <span class="sc">%&gt;%</span></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(admin2, year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>drug_cases_count_sf <span class="ot">=</span> drug_cases_sf <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(admin2, year) <span class="sc">%&gt;%</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">2017</span>, year <span class="sc">&lt;</span> <span class="dv">2023</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(admin2, year) <span class="sc">%&gt;%</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(admin2, year) <span class="sc">%&gt;%</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">incident_count</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">n</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now I will prepare the provinces GDPPC data. I use pivot_longer to combine the multiple columns into a single column, collapsing the columns of GDPPC in each year for the provinces into separate rows instead. This will make it easier to add to the drug_cases_count_sf.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>ph_gdppc <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">"data/raw/PH_Provinces_GDPPC_2018-2022.csv"</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">names_to =</span> <span class="st">"year"</span>) </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>ph_gdppc<span class="sc">$</span>year <span class="ot">=</span> <span class="fu">as.integer</span>(<span class="fu">str_remove</span>(ph_gdppc<span class="sc">$</span>year, <span class="st">"At.Constant.2018.Prices."</span>))</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>ph_gdppc<span class="sc">$</span>Geolocation <span class="ot">=</span> <span class="fu">str_remove</span>(ph_gdppc<span class="sc">$</span>Geolocation, <span class="fu">fixed</span>(<span class="st">".."</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As Metropolitan Manila is recorded separately, I will process it separately and join it together with the other provinces.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>ncr_gdppc <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">"data/raw/PH_NCR_GDPPC_2018-2022.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">names_to =</span> <span class="st">"year"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Geolocation</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Region</span><span class="st">`</span>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>ncr_gdppc<span class="sc">$</span>year <span class="ot">=</span> <span class="fu">as.integer</span>(<span class="fu">str_remove</span>(ncr_gdppc<span class="sc">$</span>year, <span class="st">"At.Constant.2018.Prices."</span>))</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>ncr_gdppc<span class="sc">$</span>Geolocation <span class="ot">=</span> <span class="st">"Metropolitan Manila"</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>ph_gdppc <span class="ot">=</span> <span class="fu">rbind</span>(ph_gdppc, ncr_gdppc) <span class="sc">%&gt;%</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">GDPPC</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">value</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, I will bring in the province population data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>ph_pop <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">"data/raw/PH_Province_Population_2020.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Geolocation</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Geographic.Location</span><span class="st">`</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>ph_pop<span class="sc">$</span>Geolocation <span class="ot">=</span> <span class="fu">str_remove</span>(ph_pop<span class="sc">$</span>Geolocation, <span class="fu">fixed</span>(<span class="st">"...."</span>))</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>ph_pop<span class="sc">$</span>Geolocation <span class="ot">=</span> <span class="fu">str_remove</span>(ph_pop<span class="sc">$</span>Geolocation, <span class="st">" </span><span class="sc">\\</span><span class="st">((.*)"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(<span class="fu">fixed</span>(<span class="st">" *"</span>)) <span class="sc">%&gt;%</span> <span class="co"># removes " *"</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(<span class="st">" </span><span class="sc">\\</span><span class="st">((.*)"</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="co"># #change ..NATIONAL CAPITAL REGION to Metropolitan Manila</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>ph_pop<span class="sc">$</span>Geolocation[ph_pop<span class="sc">$</span>Geolocation <span class="sc">==</span> <span class="st">"..NATIONAL CAPITAL REGION"</span>] <span class="ot">=</span> <span class="st">"Metropolitan Manila"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now I will join it into a single sf file, also creating a case_rate by taking the total amount of incidents divided by the province’s population.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>drug_cases_GDPPC_sf <span class="ot">=</span> <span class="fu">left_join</span>(drug_cases_count_sf, ph_pop, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"admin2"</span> <span class="ot">=</span> <span class="st">"Geolocation"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">drug_case_rate =</span> incident_count <span class="sc">/</span> Total.Population) <span class="sc">%&gt;%</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ph_gdppc, <span class="at">by =</span> <span class="fu">join_by</span>(admin2 <span class="sc">==</span> Geolocation, year <span class="sc">==</span> year))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, I will remove Maguindanao. This is a special case as the province was split into two in 2022, but the population data does not log the split as the latest publicised data was in 2020. As such, we shall remove it for the sake of consistency.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>drug_cases_GDPPC_sf <span class="ot">=</span> <span class="fu">filter</span>(drug_cases_GDPPC_sf, <span class="sc">!</span><span class="fu">startsWith</span>(drug_cases_GDPPC_sf<span class="sc">$</span>admin2, <span class="st">"Maguindanao"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, let’s save this into a rds file.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(drug_cases_GDPPC_sf, <span class="st">"data/rds/drug_cases_GDPPC_sf.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>ph_gdp <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">"data/raw/PH_GDP_2018-2022.csv"</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">names_to =</span> <span class="st">"year"</span>, <span class="at">names_transform =</span> <span class="fu">list</span>(<span class="at">year =</span> as.integer), <span class="at">values_drop_na =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>ph_gdp<span class="sc">$</span>Geolocation <span class="ot">=</span> <span class="fu">str_remove</span>(ph_gdp<span class="sc">$</span>Geolocation, <span class="fu">fixed</span>(<span class="st">".."</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>drug_cases_GDPPC_sf <span class="ot">=</span> <span class="fu">read_rds</span>(<span class="st">"data/rds/drug_cases_GDPPC_sf.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="basic-linear-regression-model" class="level3">
+<h3 class="anchored" data-anchor-id="basic-linear-regression-model">Basic Linear Regression Model</h3>
+<p>Now I shall perform the building of the linear regression model.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>drug_cases_GDP_sf <span class="ot">=</span> <span class="fu">left_join</span>(drug_cases_GDP_sf, ph_gdp, <span class="at">by =</span> <span class="fu">join_by</span>(admin2 <span class="sc">==</span> Geolocation, year <span class="sc">==</span> year))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>drug_cases.slr <span class="ot">=</span> <span class="fu">lm</span>(<span class="at">formula =</span> n <span class="sc">~</span> value, <span class="at">data =</span> drug_cases_GDP_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>drug_cases.slr <span class="ot">=</span> <span class="fu">lm</span>(<span class="at">formula =</span> drug_case_rate <span class="sc">~</span> GDPPC, <span class="at">data =</span> drug_cases_GDPPC_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases.slr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = n ~ value, data = drug_cases_GDP_sf)
+lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_sf)
 
 Residuals:
-    Min      1Q  Median      3Q     Max 
--46.171  -5.110  -1.419   1.349 123.639 
+       Min         1Q     Median         3Q        Max 
+-7.352e-06 -3.930e-06 -2.363e-06  1.768e-06  3.546e-05 
 
 Coefficients:
              Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) 6.486e-02  1.293e+00    0.05     0.96    
-value       5.462e-08  4.980e-09   10.97   &lt;2e-16 ***
+(Intercept) 4.397e-06  8.457e-07   5.199 4.36e-07 ***
+GDPPC       1.183e-11  6.009e-12   1.969   0.0501 .  
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 14.44 on 239 degrees of freedom
-  (5 observations deleted due to missingness)
-Multiple R-squared:  0.3348,    Adjusted R-squared:  0.332 
-F-statistic: 120.3 on 1 and 239 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 6.121e-06 on 234 degrees of freedom
+Multiple R-squared:  0.01631,   Adjusted R-squared:  0.0121 
+F-statistic: 3.879 on 1 and 234 DF,  p-value: 0.05008</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> drug_cases.slr,</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">value</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">n</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">GDPPC</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">drug_case_rate</span><span class="st">`</span>)) <span class="sc">+</span></span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -8055,13 +8123,253 @@ F-statistic: 120.3 on 1 and 239 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>As we can see, Metropolitan Manila is skewing the data heavily, due to its extremely high GDPPC comparative to other provinces. We shall remove manila to observe the other provinces.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>drug_cases_GDPPC_sf_no_manila <span class="ot">=</span> drug_cases_GDPPC_sf <span class="sc">%&gt;%</span> <span class="fu">filter</span>(admin2 <span class="sc">!=</span> <span class="st">"Metropolitan Manila"</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>drug_cases_no_manila.slr <span class="ot">=</span> <span class="fu">lm</span>(<span class="at">formula =</span> drug_case_rate <span class="sc">~</span> GDPPC, <span class="at">data =</span> drug_cases_GDPPC_sf_no_manila)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_no_manila.slr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_sf_no_manila)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-8.405e-06 -3.786e-06 -2.135e-06  1.908e-06  3.499e-05 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept) 3.432e-06  1.048e-06   3.274  0.00122 **
+GDPPC       2.062e-11  8.235e-12   2.505  0.01295 * 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 6.129e-06 on 229 degrees of freedom
+Multiple R-squared:  0.02666,   Adjusted R-squared:  0.02241 
+F-statistic: 6.273 on 1 and 229 DF,  p-value: 0.01295</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> drug_cases_no_manila.slr,</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">GDPPC</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">drug_case_rate</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From here, we can see a small amount of correlation between the drug case rate versus the GDPPC. I will break them down into individual years for better comparison.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>drug_cases_GDPPC_2018 <span class="ot">=</span> drug_cases_GDPPC_sf_no_manila <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2018</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>drug_cases_2018.slr <span class="ot">=</span> <span class="fu">lm</span>(<span class="at">formula =</span> drug_case_rate <span class="sc">~</span> GDPPC, <span class="at">data =</span> drug_cases_GDPPC_2018)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>drug_cases_GDPPC_2019 <span class="ot">=</span> drug_cases_GDPPC_sf_no_manila <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2019</span>)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>drug_cases_2019.slr <span class="ot">=</span> <span class="fu">lm</span>(<span class="at">formula =</span> drug_case_rate <span class="sc">~</span> GDPPC, <span class="at">data =</span> drug_cases_GDPPC_2019)</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>drug_cases_GDPPC_2020 <span class="ot">=</span> drug_cases_GDPPC_sf_no_manila <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2020</span>)</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>drug_cases_2020.slr <span class="ot">=</span> <span class="fu">lm</span>(<span class="at">formula =</span> drug_case_rate <span class="sc">~</span> GDPPC, <span class="at">data =</span> drug_cases_GDPPC_2020)</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>drug_cases_GDPPC_2021 <span class="ot">=</span> drug_cases_GDPPC_sf_no_manila <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2021</span>)</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>drug_cases_2021.slr <span class="ot">=</span> <span class="fu">lm</span>(<span class="at">formula =</span> drug_case_rate <span class="sc">~</span> GDPPC, <span class="at">data =</span> drug_cases_GDPPC_2021)</span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>drug_cases_GDPPC_2022 <span class="ot">=</span> drug_cases_GDPPC_sf_no_manila <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2022</span>)</span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>drug_cases_2022.slr <span class="ot">=</span> <span class="fu">lm</span>(<span class="at">formula =</span> drug_case_rate <span class="sc">~</span> GDPPC, <span class="at">data =</span> drug_cases_GDPPC_2022)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_2018.slr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2018)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-1.716e-05 -4.712e-06 -1.760e-06  2.180e-06  3.115e-05 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept) 1.202e-06  2.709e-06   0.444  0.65910   
+GDPPC       5.786e-11  2.118e-11   2.732  0.00863 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.617e-06 on 51 degrees of freedom
+Multiple R-squared:  0.1277,    Adjusted R-squared:  0.1105 
+F-statistic: 7.463 on 1 and 51 DF,  p-value: 0.00863</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_2019.slr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2019)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-1.059e-05 -3.317e-06 -2.017e-06  2.896e-07  1.709e-05 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept) 1.559e-06  2.127e-06   0.733   0.4672  
+GDPPC       3.462e-11  1.592e-11   2.174   0.0344 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.907e-06 on 50 degrees of freedom
+Multiple R-squared:  0.08638,   Adjusted R-squared:  0.06811 
+F-statistic: 4.727 on 1 and 50 DF,  p-value: 0.03444</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_2020.slr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2020)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-5.200e-06 -3.695e-06 -2.024e-06  1.534e-06  2.356e-05 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept) 4.044e-06  2.439e-06   1.658    0.104
+GDPPC       1.760e-11  2.163e-11   0.814    0.420
+
+Residual standard error: 5.602e-06 on 47 degrees of freedom
+Multiple R-squared:  0.0139,    Adjusted R-squared:  -0.007077 
+F-statistic: 0.6627 on 1 and 47 DF,  p-value: 0.4197</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_2021.slr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2021)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-4.255e-06 -3.371e-06 -2.002e-06  1.624e-06  1.729e-05 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)  5.332e-06  2.006e-06   2.658    0.011 *
+GDPPC       -4.248e-12  1.608e-11  -0.264    0.793  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.162e-06 on 43 degrees of freedom
+Multiple R-squared:  0.00162,   Adjusted R-squared:  -0.0216 
+F-statistic: 0.06978 on 1 and 43 DF,  p-value: 0.7929</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(drug_cases_2022.slr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2022)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-3.374e-06 -2.352e-06 -1.066e-06  4.809e-07  1.550e-05 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)  4.814e-06  1.622e-06   2.968  0.00584 **
+GDPPC       -9.324e-12  1.161e-11  -0.803  0.42837   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.779e-06 on 30 degrees of freedom
+Multiple R-squared:  0.02103,   Adjusted R-squared:  -0.0116 
+F-statistic: 0.6446 on 1 and 30 DF,  p-value: 0.4284</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> drug_cases_2018.slr,</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">GDPPC</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">drug_case_rate</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> drug_cases_2019.slr,</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">GDPPC</span><span class="st">`</span>, <span class="at">y =</span> <span class="st">`</span><span class="at">drug_case_rate</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Ex03_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="gwr-observation" class="level2">
+<h2 class="anchored" data-anchor-id="gwr-observation">GWR Observation</h2>
+<ol type="1">
+<li>Cant pull concrete relation between GDPPC and drug rates</li>
+<li>Most have p-value &gt; 0.05, so inconclusive</li>
+<li>Useful to potentially disprove relation of poorer areas with drug cases.</li>
+</ol>
+<section id="to-allow-altercation-1" class="level3">
+<h3 class="anchored" data-anchor-id="to-allow-altercation-1">To allow altercation:</h3>
+<ol type="1">
+<li>Allow showing between graph and stats</li>
+<li>Allow to see between all years and individual years</li>
+</ol>
+</section>
+</section>
+<section id="proposed-shinyapp-storyboard" class="level2">
+<h2 class="anchored" data-anchor-id="proposed-shinyapp-storyboard">Proposed ShinyApp Storyboard</h2>
+<p>For my section, I will have 3 main sections: EDA, Spatio-Temporal and Linear Regression. Each section will answer a different question as described in the background. Below I will describe a basic outline of how I plan to display the data and graphs on the Shiny Application, with images of a basic prototype. I will describe some of the options available for users to choose.</p>
+<section id="eda" class="level3">
+<h3 class="anchored" data-anchor-id="eda">EDA</h3>
+<p><img src="EDA.png" class="img-fluid"></p>
+<p><img src="EDA_Calendar.png" class="img-fluid"></p>
+<p>For EDA, I will plan to use a simple histogram to display the number of cases. This will be plotted over time based on the dates of events.</p>
+<p>Firstly, users will be able to select the range of dates. As shown above, this will be limited to the time-period that exists in our data: from Jan 2016 to Jun 2024. This will allow users to decide if they would like to more closely observe specific periods of time.</p>
+<p>Secondly, users will be able to choose the event types. This is categorised by ACLED and allows users to decide if they would like to single out or elimiate specific types of events.</p>
+</section>
+<section id="spatio-temporal" class="level3">
+<h3 class="anchored" data-anchor-id="spatio-temporal">Spatio-Temporal</h3>
+<p><img src="STKDE_animated.png" class="img-fluid"></p>
+<p>For spatio-temporal, I plan to provide 2 selection for the users. To start, users will be provided with an animation of the cases over time. Users can choose to view this animation across months or across quarters.</p>
+<p>While animation is useful to see trends, it can be too fast if the user would like to take a closer look at specific times. To do this, users can tick the “Static Graphs” checkbox, and it will open more options and display static graphs for users.</p>
+<p><img src="STKDE_static_closed.png" class="img-fluid"></p>
+<p><img src="STKDE_static_list.png" class="img-fluid"></p>
+<p>From here, 2 new options are made available. First is the date range selector. This will be curated based on if the user has selected monthly or quarterly. They can then proceed to select time periods for comparison, even jumping across different years for comparison as shown above, where Q1 for both 2016 and 2017 is selected.</p>
+<p>Second, a new checkbox titled “Fixed Range” is provided. Users can tick this if they would like the maps generated to have a fixed range across graphs for direct comparison of pure numbers.</p>
+</section>
+<section id="linear-regression" class="level3">
+<h3 class="anchored" data-anchor-id="linear-regression">Linear Regression</h3>
+<p><img src="LM_graph.png" class="img-fluid"></p>
+<p>Finally, we have linear regression. I plan to provide both the summary and the plot of the linear regression for users, and both can be displayed at the same time. I have also a checkbox titled “All years (2018-2022) consolidated”. This will allow users to choose if they would like to view a linear regression of individual years. If it is unchecked, users will be provided a slider to let them decide which years they would like to view.</p>
+<p><img src="LM_summary.png" class="img-fluid"></p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

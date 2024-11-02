@@ -13,21 +13,21 @@ execute:
 
 When President Rodrigo Duterte took office in Philippines in 2016, a national “war on drugs” was declared and carried out. It has lead to the death of over 12,000 Filipinos to date, with at least 2,500 of the deaths attributed to the Philippine National Police. The Human Rights Watch(HRW) research found evidence of police falsifying evidence to get convictions, leading to unjust killings. (HRW, n.d.)
 
-Now that a new President Ferdinand Marcos Jr. has taken office in 2022, he promised to end the killings and focus on rehabilitation. However, killings still seem to be ongoing till the current day (Yan, 2024). In our project, we have 2 main objectives:
+Now that a new President Ferdinand Marcos Jr. has taken office in 2022, he promised to end the killings and focus on rehabilitation. However, killings still seem to be ongoing till the current day (Yan, 2024). In my assignment, I will focus on 2 main objectives:
 
-1.  We want to find out how the “War on Drugs” was occurring in Philippines, to see if there are any patterns over where most cases took place. We plan to use **Spatial Point Patterns Analysis** to identify any clustering of cases.
+1.  We want to see if the killings have truly been reduced under President Ferdinand Marcos Jr. We plan to use **Spatio-Temporal Point Patterns Analysis** to see the pattern of cases from 2016 to 2024.
 
-2.  We want to see if the killings have truly been reduced under President Ferdinand Marcos Jr. We plan to use **Spatio-Temporal Point Patterns Analysis** to see the pattern of cases from 2016 to 2024.
-
-I will be focusing on the Spatio-Temporal Point Pattern Analysis.
+2.  Is there a correlation between a province's GDP Per Capita and the occurance of incidents? We plan to use a **Simple Linear Regression Model** to identify any correlation.
 
 ## **Our Data**
 
-This is the data we plan to use. Do note that this may be added on to during our further research.
+This is the data we plan to use.
 
 -   Philippines data from [Armed Conflict Location & Event Data Project (ACLED)](https://acleddata.com/). The killings are logged as “Political Violence” and is recorded by ACLED (ACLED, 2024)
 
 -   [Philippines boundary data](https://data.humdata.org/dataset/cod-ab-phl) from HDX.
+
+-   Population and GDPPC data from the [Philippine Statistics Authority](https://psa.gov.ph/).
 
 ## Importing Packages and Data
 
@@ -48,6 +48,8 @@ drug_cases_sf = read.csv("data/raw/2016-01-01-2024-06-30-Philippines.csv") %>%
   mutate(event_quarter = year*10 + quarter(event_date)) 
 ```
 
+I have converted the aspatial data into an **sf** object and transformed it to the correct crs for Philippine. I have also mutated custom columns containing the month and quarters of each event. I have added the year directly in front of the month and quarter for future usage in the Spatio-Temporal Point Pattern analysis. (E.g. An event occuring in December of 2024 will be "202412" in **event_month**, and "20244" in **event_quarter**.)
+
 Now let's import the Philippine boundary data.
 
 ```{r}
@@ -59,34 +61,60 @@ ph_sf = st_read(dsn = "data/raw/geospatial",
 st_crs(ph_sf)
 ```
 
+The boundary data is projected to the standard WGS 84 coordinates. Let us transform it into a suitable crs for Philippine.
+
 ```{r}
 ph_sf = st_transform(ph_sf, crs = 32651)
 st_crs(ph_sf)
 ```
 
-```{r}
-tmap_mode("plot")
-tm_shape(ph_sf) + 
-  tm_polygons() +
-tm_shape(drug_cases_sf) +
-  tm_dots()
-```
+I shall convert this into an owin object for future use.
 
 ```{r}
+#| eval: false
 ph_owin = as.owin(ph_sf)
 ```
 
+Now I shall save our data into rds files for future use.
+
 ```{r}
-hist(drug_cases_sf$"event_quarter")
+#| eval: false
+write_rds(ph_owin, "data/rds/ph_owin.rds")
+write_rds(ph_sf, "data/rds/ph_sf.rds")
+write_rds(drug_cases_sf, "data/rds/drug_cases_sf.rds")
 ```
 
-## Computing STKDE by Quarter
+```{r}
+ph_owin = read_rds("data/rds/ph_owin.rds")
+ph_sf = read_rds("data/rds/ph_sf.rds")
+drug_cases_sf = read_rds("data/rds/drug_cases_sf.rds")
+```
+
+```{r}
+ggplot(data = drug_cases_sf,
+       aes(x= `event_date`)) +
+  geom_histogram(bins = 20,
+                 color = "black",
+                 fill = "light blue")
+```
+
+### To allow altercation:
+
+1.  Type of events ("Violence against Civilians", "Battles", "Strategic developments")
+
+## Computing STKDE
+
+### By Quarter
+
+First I will start by grabbing the event_quarter into a ppp object and checking for any duplicates.
 
 ```{r}
 drug_cases_quarter = drug_cases_sf %>% select(event_quarter)
 drug_cases_quarter_ppp = as.ppp(drug_cases_quarter)
 any(duplicated(drug_cases_quarter_ppp))
 ```
+
+As we do find some duplicates, I will perform jittering to move the duplicates.
 
 ```{r}
 drug_cases_quarter_ppp_jit <- rjitter(drug_cases_quarter_ppp, 
@@ -95,6 +123,8 @@ drug_cases_quarter_ppp_jit <- rjitter(drug_cases_quarter_ppp,
                              drop=TRUE)
 any(duplicated(drug_cases_quarter_ppp_jit))
 ```
+
+Now I shall attach the owin object.
 
 ```{r}
 drug_cases_quarter_owin = drug_cases_quarter_ppp_jit[ph_owin]
@@ -105,12 +135,17 @@ summary(drug_cases_quarter_owin)
 plot(drug_cases_quarter_owin)
 ```
 
+Finally, we can compute the Spatio-Temporal Kernel Density Estimate.
+
 ```{r}
 st_kde = spattemp.density(drug_cases_quarter_owin)
 summary(st_kde)
 ```
 
+Now I shall plot it into an animation. I will go through each quarter for every year and plot them out into an animation. 2024 will have an extra if-condition to only plot out Q1 and Q2 as we are only taking data till June 2024.
+
 ```{r}
+#| eval: false
 #plot using 2 for loops, then pump into a variable to hold it, then use animation? Just plot(st_kde) will plot 20165, which doesnt exist
 yrs = c(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024)
 quarts = c(1, 2, 3, 4)
@@ -131,7 +166,9 @@ animation::saveGIF(
 
 ![***Drug cases by quarterly***](drug_stkde_quarters.gif)
 
-## Computing STKDE by Month
+### By Month
+
+Now I shall repeat the steps, but using event_month instead.
 
 ```{r}
 drug_cases_month = drug_cases_sf %>% select(event_month)
@@ -158,6 +195,7 @@ summary(st_kde_month)
 ```
 
 ```{r}
+#| eval: false
 yrs = c(2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024)
 mths = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ,12)
 
@@ -177,57 +215,113 @@ animation::saveGIF(
 
 ![***Drug cases by monthly***](drug_stkde_month.gif)
 
-## Observations
+## STKDE Observations
 
 1.  Killings do seem to reduce, but a bit hard to tell
 
 2.  We do see the cases moving south.
 
-### Current Thoughts
+### To allow altercation in ShinyApp
 
-1.  Should make fix.range an option to show if using the fixed range if there is a decrease?
+1.  Allow a T/F for fix.range to show using the fixed range if there is a decrease
 
-2.  Should show animation, but allow them to also show base graph
+2.  We should show animation as landing page, but allow them to toggle between static graphs and animations.
 
-3.  Potentially also make use of scatterplots or histograms to showcase a decrease in overall numbers
+    1.  Allow choosing of monthly or quarterly
 
-4.  Allow users to choose between months and quarter.
+    2.  For static graphs, allow choosing of time-period.
 
 ## GWR
 
-1.  Mutate drug_cases_sf to
+### Data Prep
 
-    1.  Filter only 2018-2022
-
-    2.  Group by adm2, then year
-
-    3.  Sum number of cases per province per year
-
-2.  Join with GDP
-
-3.  Perform Single Linear Regression.
+Now lets prepare the data for the Simple Linear Regression Model. I will filter only 2018-2022 data as that was all the data we could get the GDP Per Capita (GDPPC) for provinces. I then group them and count the number of incidents per year and per province.
 
 ```{r}
-drug_cases_GDP_sf = drug_cases_sf %>%
+#| eval: false
+drug_cases_count_sf = drug_cases_sf %>%
   select(admin2, year) %>%
   filter(year > 2017, year < 2023) %>%
   group_by(admin2, year) %>%
-  count(admin2, year)
+  count(admin2, year) %>%
+  rename(`incident_count` = `n`)
+```
+
+Now I will prepare the provinces GDPPC data. I use pivot_longer to combine the multiple columns into a single column, collapsing the columns of GDPPC in each year for the provinces into separate rows instead. This will make it easier to add to the drug_cases_count_sf.
+
+```{r}
+#| eval: false
+ph_gdppc = read.csv("data/raw/PH_Provinces_GDPPC_2018-2022.csv", check.names = FALSE) %>%
+  pivot_longer(cols = 2:6, names_to = "year") 
+
+ph_gdppc$year = as.integer(str_remove(ph_gdppc$year, "At.Constant.2018.Prices."))
+ph_gdppc$Geolocation = str_remove(ph_gdppc$Geolocation, fixed(".."))
+```
+
+As Metropolitan Manila is recorded separately, I will process it separately and join it together with the other provinces.
+
+```{r}
+#| eval: false
+ncr_gdppc = read.csv("data/raw/PH_NCR_GDPPC_2018-2022.csv") %>%
+  pivot_longer(cols = 2:6, names_to = "year") %>%
+  rename(`Geolocation` = `Region`)
+
+ncr_gdppc$year = as.integer(str_remove(ncr_gdppc$year, "At.Constant.2018.Prices."))
+ncr_gdppc$Geolocation = "Metropolitan Manila"
+
+ph_gdppc = rbind(ph_gdppc, ncr_gdppc) %>%
+  rename(`GDPPC` = `value`)
+```
+
+Finally, I will bring in the province population data.
+
+```{r}
+#| eval: false
+ph_pop = read.csv("data/raw/PH_Province_Population_2020.csv") %>%
+  rename(`Geolocation` = `Geographic.Location`)
+ph_pop$Geolocation = str_remove(ph_pop$Geolocation, fixed("...."))
+
+ph_pop$Geolocation = str_remove(ph_pop$Geolocation, " \\((.*)") %>%
+  str_remove(fixed(" *")) %>% # removes " *"
+  str_remove(" \\((.*)")
+
+# #change ..NATIONAL CAPITAL REGION to Metropolitan Manila
+ph_pop$Geolocation[ph_pop$Geolocation == "..NATIONAL CAPITAL REGION"] = "Metropolitan Manila"
+```
+
+Now I will join it into a single sf file, also creating a case_rate by taking the total amount of incidents divided by the province's population.
+
+```{r}
+#| eval: false
+drug_cases_GDPPC_sf = left_join(drug_cases_count_sf, ph_pop, by = c("admin2" = "Geolocation")) %>% 
+  mutate(drug_case_rate = incident_count / Total.Population) %>%
+  left_join(ph_gdppc, by = join_by(admin2 == Geolocation, year == year))
+```
+
+Finally, I will remove Maguindanao. This is a special case as the province was split into two in 2022, but the population data does not log the split as the latest publicised data was in 2020. As such, we shall remove it for the sake of consistency.
+
+```{r}
+#| eval: false
+drug_cases_GDPPC_sf = filter(drug_cases_GDPPC_sf, !startsWith(drug_cases_GDPPC_sf$admin2, "Maguindanao"))
+```
+
+Finally, let's save this into a rds file.
+
+```{r}
+#| eval: false
+write_rds(drug_cases_GDPPC_sf, "data/rds/drug_cases_GDPPC_sf.rds")
 ```
 
 ```{r}
-ph_gdp = read.csv("data/raw/PH_GDP_2018-2022.csv", check.names = FALSE) %>%
-  pivot_longer(cols = 2:6, names_to = "year", names_transform = list(year = as.integer), values_drop_na = TRUE)
-
-ph_gdp$Geolocation = str_remove(ph_gdp$Geolocation, fixed(".."))
+drug_cases_GDPPC_sf = read_rds("data/rds/drug_cases_GDPPC_sf.rds")
 ```
 
-```{r}
-drug_cases_GDP_sf = left_join(drug_cases_GDP_sf, ph_gdp, by = join_by(admin2 == Geolocation, year == year))
-```
+### Basic Linear Regression Model
+
+Now I shall perform the building of the linear regression model.
 
 ```{r}
-drug_cases.slr = lm(formula = n ~ value, data = drug_cases_GDP_sf)
+drug_cases.slr = lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_sf)
 ```
 
 ```{r}
@@ -236,7 +330,114 @@ summary(drug_cases.slr)
 
 ```{r}
 ggplot(data = drug_cases.slr,
-       aes(x = `value`, y = `n`)) +
+       aes(x = `GDPPC`, y = `drug_case_rate`)) +
   geom_point() + 
   geom_smooth(method = lm)
 ```
+
+As we can see, Metropolitan Manila is skewing the data heavily, due to its extremely high GDPPC comparative to other provinces. We shall remove manila to observe the other provinces.
+
+```{r}
+drug_cases_GDPPC_sf_no_manila = drug_cases_GDPPC_sf %>% filter(admin2 != "Metropolitan Manila")
+drug_cases_no_manila.slr = lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_sf_no_manila)
+summary(drug_cases_no_manila.slr)
+```
+
+```{r}
+ggplot(data = drug_cases_no_manila.slr,
+       aes(x = `GDPPC`, y = `drug_case_rate`)) +
+  geom_point() + 
+  geom_smooth(method = lm)
+```
+
+From here, we can see a small amount of correlation between the drug case rate versus the GDPPC. I will break them down into individual years for better comparison.
+
+```{r}
+drug_cases_GDPPC_2018 = drug_cases_GDPPC_sf_no_manila %>% filter(year == 2018)
+drug_cases_2018.slr = lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2018)
+
+drug_cases_GDPPC_2019 = drug_cases_GDPPC_sf_no_manila %>% filter(year == 2019)
+drug_cases_2019.slr = lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2019)
+
+drug_cases_GDPPC_2020 = drug_cases_GDPPC_sf_no_manila %>% filter(year == 2020)
+drug_cases_2020.slr = lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2020)
+
+drug_cases_GDPPC_2021 = drug_cases_GDPPC_sf_no_manila %>% filter(year == 2021)
+drug_cases_2021.slr = lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2021)
+
+drug_cases_GDPPC_2022 = drug_cases_GDPPC_sf_no_manila %>% filter(year == 2022)
+drug_cases_2022.slr = lm(formula = drug_case_rate ~ GDPPC, data = drug_cases_GDPPC_2022)
+```
+
+```{r}
+summary(drug_cases_2018.slr)
+summary(drug_cases_2019.slr)
+summary(drug_cases_2020.slr)
+summary(drug_cases_2021.slr)
+summary(drug_cases_2022.slr)
+```
+
+```{r}
+ggplot(data = drug_cases_2018.slr,
+       aes(x = `GDPPC`, y = `drug_case_rate`)) +
+  geom_point() + 
+  geom_smooth(method = lm)
+```
+
+```{r}
+ggplot(data = drug_cases_2019.slr,
+       aes(x = `GDPPC`, y = `drug_case_rate`)) +
+  geom_point() + 
+  geom_smooth(method = lm)
+```
+
+## GWR Observation
+
+1.  Cant pull concrete relation between GDPPC and drug rates
+2.  Most have p-value \> 0.05, so inconclusive
+3.  Useful to potentially disprove relation of poorer areas with drug cases.
+
+### To allow altercation:
+
+1.  Allow showing between graph and stats
+2.  Allow to see between all years and individual years
+
+## Proposed ShinyApp Storyboard
+
+For my section, I will have 3 main sections: EDA, Spatio-Temporal and Linear Regression. Each section will answer a different question as described in the background. Below I will describe a basic outline of how I plan to display the data and graphs on the Shiny Application, with images of a basic prototype. I will describe some of the options available for users to choose.
+
+### EDA
+
+![](EDA.png)
+
+![](EDA_Calendar.png)
+
+For EDA, I will plan to use a simple histogram to display the number of cases. This will be plotted over time based on the dates of events.
+
+Firstly, users will be able to select the range of dates. As shown above, this will be limited to the time-period that exists in our data: from Jan 2016 to Jun 2024. This will allow users to decide if they would like to more closely observe specific periods of time.
+
+Secondly, users will be able to choose the event types. This is categorised by ACLED and allows users to decide if they would like to single out or elimiate specific types of events.
+
+### Spatio-Temporal
+
+![](STKDE_animated.png)
+
+For spatio-temporal, I plan to provide 2 selection for the users. To start, users will be provided with an animation of the cases over time. Users can choose to view this animation across months or across quarters.
+
+While animation is useful to see trends, it can be too fast if the user would like to take a closer look at specific times. To do this, users can tick the "Static Graphs" checkbox, and it will open more options and display static graphs for users.
+
+![](STKDE_static_closed.png)
+
+![](STKDE_static_list.png)
+
+From here, 2 new options are made available. First is the date range selector. This will be curated based on if the user has selected monthly or quarterly. They can then proceed to select time periods for comparison, even jumping across different years for comparison as shown above, where Q1 for both 2016 and 2017 is selected.
+
+Second, a new checkbox titled "Fixed Range" is provided. Users can tick this if they would like the maps generated to have a fixed range across graphs for direct comparison of pure numbers.
+
+### Linear Regression
+
+![](LM_graph.png)
+
+Finally, we have linear regression. I plan to provide both the summary and the plot of the linear regression for users, and both can be displayed at the same time. I have also a checkbox titled "All years (2018-2022) consolidated". This will allow users to choose if they would like to view a linear regression of individual years. If it is unchecked, users will be provided a slider to let them decide which years they would like to view.
+
+![](LM_summary.png)
