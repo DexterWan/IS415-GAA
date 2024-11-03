@@ -164,7 +164,7 @@ animation::saveGIF(
 )
 ```
 
-![***Drug cases by quarterly***](drug_stkde_quarters.gif)
+![***Drug cases by quarterly***](images/drug_stkde_quarters.gif)
 
 ### By Month
 
@@ -213,7 +213,7 @@ animation::saveGIF(
 )
 ```
 
-![***Drug cases by monthly***](drug_stkde_month.gif)
+![***Drug cases by monthly***](images/drug_stkde_month.gif)
 
 ## STKDE Observations
 
@@ -408,9 +408,9 @@ For my section, I will have 3 main sections: EDA, Spatio-Temporal and Linear Reg
 
 ### EDA
 
-![](EDA.png)
+![](images/EDA.png)
 
-![](EDA_Calendar.png)
+![](images/EDA_Calendar.png)
 
 For EDA, I will plan to use a simple histogram to display the number of cases. This will be plotted over time based on the dates of events.
 
@@ -420,15 +420,15 @@ Secondly, users will be able to choose the event types. This is categorised by A
 
 ### Spatio-Temporal
 
-![](STKDE_animated.png)
+![](images/STKDE_animated.png)
 
 For spatio-temporal, I plan to provide 2 selection for the users. To start, users will be provided with an animation of the cases over time. Users can choose to view this animation across months or across quarters.
 
 While animation is useful to see trends, it can be too fast if the user would like to take a closer look at specific times. To do this, users can tick the "Static Graphs" checkbox, and it will open more options and display static graphs for users.
 
-![](STKDE_static_closed.png)
+![](images/STKDE_static_closed.png)
 
-![](STKDE_static_list.png)
+![](images/STKDE_static_list.png)
 
 From here, 2 new options are made available. First is the date range selector. This will be curated based on if the user has selected monthly or quarterly. They can then proceed to select time periods for comparison, even jumping across different years for comparison as shown above, where Q1 for both 2016 and 2017 is selected.
 
@@ -436,8 +436,8 @@ Second, a new checkbox titled "Fixed Range" is provided. Users can tick this if 
 
 ### Linear Regression
 
-![](LM_graph.png)
+![](images/LM_graph.png)
 
 Finally, we have linear regression. I plan to provide both the summary and the plot of the linear regression for users, and both can be displayed at the same time. I have also a checkbox titled "All years (2018-2022) consolidated". This will allow users to choose if they would like to view a linear regression of individual years. If it is unchecked, users will be provided a slider to let them decide which years they would like to view.
 
-![](LM_summary.png)
+![](images/LM_summary.png)
