@@ -915,5 +915,33 @@
     "title": "Take-Home Exercise 3",
     "section": "Proposed ShinyApp Storyboard",
     "text": "Proposed ShinyApp Storyboard\nFor my section, I will have 3 main sections: EDA, Spatio-Temporal and Linear Regression. Each section will answer a different question as described in the background. Below I will describe a basic outline of how I plan to display the data and graphs on the Shiny Application, with images of a basic prototype. I will describe some of the options available for users to choose.\n\nEDA\n\n\nFor EDA, I will plan to use a simple histogram to display the number of cases. This will be plotted over time based on the dates of events.\nFirstly, users will be able to select the range of dates. As shown above, this will be limited to the time-period that exists in our data: from Jan 2016 to Jun 2024. This will allow users to decide if they would like to more closely observe specific periods of time.\nSecondly, users will be able to choose the event types. This is categorised by ACLED and allows users to decide if they would like to single out or elimiate specific types of events.\n\n\nSpatio-Temporal\n\nFor spatio-temporal, I plan to provide 2 selection for the users. To start, users will be provided with an animation of the cases over time. Users can choose to view this animation across months or across quarters.\nWhile animation is useful to see trends, it can be too fast if the user would like to take a closer look at specific times. To do this, users can tick the “Static Graphs” checkbox, and it will open more options and display static graphs for users.\n\n\nFrom here, 2 new options are made available. First is the date range selector. This will be curated based on if the user has selected monthly or quarterly. They can then proceed to select time periods for comparison, even jumping across different years for comparison as shown above, where Q1 for both 2016 and 2017 is selected.\nSecond, a new checkbox titled “Fixed Range” is provided. Users can tick this if they would like the maps generated to have a fixed range across graphs for direct comparison of pure numbers.\n\n\nLinear Regression\n\nFinally, we have linear regression. I plan to provide both the summary and the plot of the linear regression for users, and both can be displayed at the same time. I have also a checkbox titled “All years (2018-2022) consolidated”. This will allow users to choose if they would like to view a linear regression of individual years. If it is unchecked, users will be provided a slider to let them decide which years they would like to view."
+  },
+  {
+    "objectID": "In-Class_Ex/In-Class_Ex11/In-Class_Ex11.html",
+    "href": "In-Class_Ex/In-Class_Ex11/In-Class_Ex11.html",
+    "title": "In-Class Exercise 11",
+    "section": "",
+    "text": "Learning about geocoding in R.\n\n\n4 Nov 24: Completed In-Class Exercise 11.\n6 Nov 24: Updated changelog error."
+  },
+  {
+    "objectID": "In-Class_Ex/In-Class_Ex11/In-Class_Ex11.html#description",
+    "href": "In-Class_Ex/In-Class_Ex11/In-Class_Ex11.html#description",
+    "title": "In-Class Exercise 11",
+    "section": "",
+    "text": "Learning about geocoding in R.\n\n\n4 Nov 24: Completed In-Class Exercise 11.\n6 Nov 24: Updated changelog error."
+  },
+  {
+    "objectID": "In-Class_Ex/In-Class_Ex11/In-Class_Ex11.html#importing-data-and-packages",
+    "href": "In-Class_Ex/In-Class_Ex11/In-Class_Ex11.html#importing-data-and-packages",
+    "title": "In-Class Exercise 11",
+    "section": "Importing Data and Packages",
+    "text": "Importing Data and Packages\n\npacman::p_load(tidyverse, sf, tmap, httr, performance)\n\n\nfolder_path = \"data/aspatial\"\nfile_list = list.files(path = folder_path, \n                        pattern = \"^realis.*\\\\.csv$\", \n                        full.names = TRUE)\n\nrealis_data = file_list %&gt;% map_dfr(read_csv)\n\nWarning: One or more parsing issues, call `problems()` on your data frame for details,\ne.g.:\n  dat &lt;- vroom(...)\n  problems(dat)\n\n\nRows: 10000 Columns: 21\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (15): Project Name, Sale Date, Address, Type of Sale, Type of Area, Nett...\ndbl  (2): Area (SQM), Number of Units\nnum  (4): Transacted Price ($), Area (SQFT), Unit Price ($ PSF), Unit Price ...\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\nRows: 6643 Columns: 21\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr (15): Project Name, Sale Date, Address, Type of Sale, Type of Area, Nett...\ndbl  (1): Number of Units\nnum  (5): Transacted Price ($), Area (SQFT), Unit Price ($ PSF), Area (SQM),...\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n\n\n\nWrangling Data\n\ncondo_resale = realis_data %&gt;%\n  mutate(`Sale Date` = dmy(`Sale Date`)) %&gt;%\n  filter(`Type of Sale` == \"Resale\" &\n           `Property Type` == \"Condominium\")"
+  },
+  {
+    "objectID": "In-Class_Ex/In-Class_Ex11/In-Class_Ex11.html#geocoding",
+    "href": "In-Class_Ex/In-Class_Ex11/In-Class_Ex11.html#geocoding",
+    "title": "In-Class Exercise 11",
+    "section": "Geocoding",
+    "text": "Geocoding\n\npostcode = unique(condo_resale$`Postal Code`)\n\n\nurl = \"https://onemap.gov.sg/api/common/elastic/search\"\nfound = data.frame()\nnot_found = data.frame()\n\nfor (postcode in postcode){\n  query = list('searchVal'=postcode, 'returnGeom'='Y', \n                'getAddrDetails'='Y', 'pageNum'='1')\n  res = GET(url, query=query)\n  if ((content(res)$found)!=0){\n    found = rbind(found, data.frame(content(res))[4:13])\n  } else {\n    not_found = data.frame(postcode)\n  }\n}\n\n\nfound = found %&gt;%\n  select(c(6:8)) %&gt;%\n  rename(POSTAL = `results.POSTAL`,\n         XCOORD = `results.X`,\n         YCOORD = `results.Y`)\n\n\ncondo_resale_geocoded = left_join(\n  condo_resale, found, \n  by = c('Postal Code' = 'POSTAL'))\n\n\ncondo_resale_sf = st_as_sf(condo_resale_geocoded, \n                            coords = c(\"XCOORD\",\n                                       \"YCOORD\"),\n                            crs=3414)\n\n\noverlapping_points = condo_resale_sf %&gt;%\n  mutate(overlap = lengths(st_equals(., .)) &gt; 1)\n\n\ncondo_resale_sf = condo_resale_sf %&gt;%\n  st_jitter(amount = 2)"
   }
 ]
