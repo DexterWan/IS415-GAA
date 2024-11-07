@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Exercise 7"
+title: "Hands-on Exercise 8 & 9"
 author: "Dexter Wan"
 date: "October 11, 2024"
 date-modified: "last-modified"
@@ -15,9 +15,11 @@ Learning to delineate homogeneous region by using geographically referenced mult
 
 ### Changelog
 
-11 Oct 24: Completed Hands-on Exercise 7 up to 12.7.
+11 Oct 24: Completed Hands-on Exercise 8 up to 12.7.
 
-15 Oct 24: Completed Hands-on Exercise 7 from 12.8-12.10
+15 Oct 24: Completed Hands-on Exercise 9 from 12.8-12.10
+
+7 Nov 24: Updated from "Hands-on Exercise 7" to "Hands-on Exercise 8 & 9"
 
 ## Importing Data and setting up R Environment
 

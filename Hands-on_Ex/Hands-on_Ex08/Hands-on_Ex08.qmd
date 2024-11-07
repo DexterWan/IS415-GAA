@@ -1,5 +1,5 @@
 ---
-title: "Hands-on Exercise 8"
+title: "Hands-on Exercise 10 & 11"
 author: "Dexter Wan"
 date: "October 22, 2024"
 date-modified: "last-modified"
@@ -15,7 +15,9 @@ Learning to build hedonic pricing models by using GWR methods in R.
 
 ### Changelog
 
-23 Oct 24: Completed Hands-on Exercise 8.
+23 Oct 24: Completed Hands-on Exercise 10 & 11.
+
+7 Nov 24: Updated from "Hands-on Exercise 8" to "Hands-on Exercise 10 & 11"
 
 ## Importing Data and setting up R Environment
 
