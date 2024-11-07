@@ -1,0 +1,181 @@
+---
+title: "Hands-on Exercise 12"
+author: "Dexter Wan"
+date: "November 7, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+## Description
+
+Learning about Geographically Weighted Predictive Models in R.
+
+### Changelog
+
+7 Nov 24: Completed Hands-on Exercise 12
+
+## Importing Data and setting up R Environment
+
+First I will load the relevant packages needed.
+
+```{r}
+pacman::p_load(sf, spdep, SpatialML, tmap, rsample, Metrics, tidyverse)
+```
+
+Now I will import the geospatial data.
+
+```{r}
+mdata = read_rds("data/model/mdata.rds")
+```
+
+The data can be split into training and testing data sets using 65% and 35% respectively. The split can be done with *initial_split().*
+
+```{r}
+set.seed(1234)
+resale_split = initial_split(mdata, prop = 6.5/10)
+
+train_data = training(resale_split)
+test_data = testing(resale_split)
+
+write_rds(train_data, "data/model/train_data.rds")
+write_rds(test_data, "data/model/test_data.rds")
+```
+
+### Computing Correlation Matrix
+
+We should use a correlation matrix to examine signs of multicolinearity.
+
+```{r}
+#| fig-width: 12
+mdata_nogeo = mdata %>% st_drop_geometry()
+corrplot::corrplot(cor(mdata_nogeo[, 2:17]),
+                   diag = FALSE,
+                   order = "AOE",
+                   tl.pos = "td",
+                   tl.cex = 0.5,
+                   method = "number",
+                   type = "upper")
+```
+
+All values of correlation are \<0.8, as such we can determine that there is no sign of multicolinearity.
+
+## Building a non-spatial multiple linear regression
+
+```{r}
+price_mlr = lm(resale_price ~ floor_area_sqm + storey_order + 
+                 remaining_lease_mths + PROX_CBD + PROX_ELDERLYCARE + 
+                 PROX_HAWKER + PROX_MRT + PROX_PARK + PROX_MALL + 
+                 PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                 WITHIN_350M_CHILDCARE + WITHIN_350M_BUS + WITHIN_1KM_PRISCH,
+               data = train_data)
+summary(price_mlr)
+```
+
+```{r}
+write_rds(price_mlr, "data/model/price_mlr.rds")
+```
+
+## Preparing Coordinates Data
+
+Extract the coordinate data:
+
+```{r}
+coords = st_coordinates(mdata)
+coords_train = st_coordinates(train_data)
+coords_test = st_coordinates(test_data)
+
+write_rds(coords_train, "data/model/coords_train.rds")
+write_rds(coords_test, "data/model/coords_test.rds")
+```
+
+Dropping the geometry field:
+
+```{r}
+train_data = train_data %>% st_drop_geometry()
+```
+
+## Calibrating Random Forest Model
+
+```{r}
+set.seed(1234)
+rf = ranger(resale_price ~ floor_area_sqm + storey_order + remaining_lease_mths +
+              PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + PROX_MRT + 
+              PROX_PARK + PROX_MALL + PROX_SUPERMARKET + 
+              WITHIN_350M_KINDERGARTEN + WITHIN_350M_CHILDCARE + 
+              WITHIN_350M_BUS + WITHIN_1KM_PRISCH,
+            data = train_data)
+rf
+```
+
+```{r}
+write_rds(rf, "data/model/rf.rds")
+```
+
+## Calibrating Geographical Random Forest Model
+
+```{r}
+#| eval: false
+set.seed(1234)
+gwRF_adaptive = grf(formula = resale_price ~ floor_area_sqm + storey_order +
+                      remaining_lease_mths + PROX_CBD + PROX_ELDERLYCARE +
+                      PROX_HAWKER + PROX_MRT + PROX_PARK + PROX_MALL + 
+                      PROX_SUPERMARKET + WITHIN_350M_KINDERGARTEN +
+                      WITHIN_350M_CHILDCARE + WITHIN_350M_BUS + WITHIN_1KM_PRISCH,
+                    dframe = train_data, 
+                    bw = 55,
+                    kernel = "adaptive",
+                    coords = coords_train)
+
+write_rds(gwRF_adaptive, "data/model/gwRF_adaptive.rds")
+```
+
+```{r}
+gwRF_adaptive = read_rds("data/model/gwRF_adaptive.rds")
+```
+
+### Predicting using test data
+
+```{r}
+test_data = cbind(test_data, coords_test) %>% st_drop_geometry()
+```
+
+```{r}
+gwRF_pred = predict.grf(gwRF_adaptive, test_data,
+                        x.var.name = "X",
+                        y.var.name = "Y",
+                        local.w = 1,
+                        global.w = 0)
+```
+
+```{r}
+write_rds(gwRF_pred, "data/model/gwRF_pred.rds")
+```
+
+```{r}
+gwRF_pred_df = as.data.frame(gwRF_pred)
+test_data_p = cbind(test_data, gwRF_pred_df)
+write_rds(test_data_p, "data/model/test_data_p.rds")
+```
+
+### Calculating Root Mean Square Error (RMSE)
+
+RMSE allows us to measure how far predicted values are from observed values. This is done using *rmse().*
+
+```{r}
+rmse(test_data_p$resale_price,
+     test_data_p$gwRF_pred)
+```
+
+### Visualising predicted values
+
+Scatterplots can also be used to visualise the difference instead of RMSE.
+
+```{r}
+ggplot(data = test_data_p,
+       aes(x = gwRF_pred,
+           y = resale_price)) +
+  geom_point()
+```
